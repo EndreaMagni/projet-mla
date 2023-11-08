@@ -1,4 +1,5 @@
-# PROJET MLA
+PROJET MLA
+===
 
 Voici le petit git sur lequel on va travailler, et ça c'est le readme qu'on pourra tous mettre à jour pour créer un espace où on peut s'organiser etc. :D
 
@@ -11,4 +12,4 @@ Voici le petit git sur lequel on va travailler, et ça c'est le readme qu'on pou
 ## Informations utiles
 
 Voici le lien vers le google drive du projet : 
-\nhttps://drive.google.com/drive/folders/1xI-tSFewnbJpa2LyrUyNPgijisipsltO?usp=sharing
+https://drive.google.com/drive/folders/1xI-tSFewnbJpa2LyrUyNPgijisipsltO?usp=sharing
