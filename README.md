@@ -14,8 +14,10 @@ Voici le petit git sur lequel on va travailler, et ça c'est le readme qu'on pou
 Petite liste de liens utiles :
 * [Google drive du projet.][1]
 * [Tutoriel mise en forme du read me.][2]
+* [Lien vers le dataset.][3]
 
 
 
 [1]: https://drive.google.com/drive/folders/1xI-tSFewnbJpa2LyrUyNPgijisipsltO?usp=sharing "lien drive"
 [2]: https://programminghistorian.org/fr/lecons/debuter-avec-markdown#:~:text=Les%20fichiers%20Markdown%20portent%20l,texte%20avec%20la%20syntaxe%20Markdown. "lien tutoriel"
+[3]: https://www.statmt.org/wmt14/translation-task.html "lien dataset"
