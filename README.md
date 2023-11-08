@@ -11,6 +11,11 @@ Voici le petit git sur lequel on va travailler, et ça c'est le readme qu'on pou
 
 ## Informations utiles
 
-Voici le [lien vers le google drive du projet][1].
+Petite liste de liens utiles :
+* [Google drive du projet.][1]
+* [Tutoriel mise en forme du read me.][2]
+
+
 
 [1]: https://drive.google.com/drive/folders/1xI-tSFewnbJpa2LyrUyNPgijisipsltO?usp=sharing "lien drive"
+[2]: https://programminghistorian.org/fr/lecons/debuter-avec-markdown#:~:text=Les%20fichiers%20Markdown%20portent%20l,texte%20avec%20la%20syntaxe%20Markdown. "lien tutoriel"
