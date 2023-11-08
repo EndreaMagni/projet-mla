@@ -19,6 +19,3 @@ Petite liste de liens utiles :
 
 [1]: https://drive.google.com/drive/folders/1xI-tSFewnbJpa2LyrUyNPgijisipsltO?usp=sharing "lien drive"
 [2]: https://programminghistorian.org/fr/lecons/debuter-avec-markdown#:~:text=Les%20fichiers%20Markdown%20portent%20l,texte%20avec%20la%20syntaxe%20Markdown. "lien tutoriel"
-
-| colonne1 | colonne2 |
-| -------- | -------- |
