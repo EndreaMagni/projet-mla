@@ -11,4 +11,7 @@ Voici le petit git sur lequel on va travailler, et ça c'est le readme qu'on pou
 
 ## Informations utiles
 
-Voici le lien vers le google drive du projet :  https://drive.google.com/drive/folders/1xI-tSFewnbJpa2LyrUyNPgijisipsltO?usp=sharing
+Voici le lien vers le google drive du projet :
+
+
+https://drive.google.com/drive/folders/1xI-tSFewnbJpa2LyrUyNPgijisipsltO?usp=sharing
