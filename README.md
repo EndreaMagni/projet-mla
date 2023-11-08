@@ -14,3 +14,10 @@ Voici le petit git sur lequel on va travailler, et ça c'est le readme qu'on pou
 Voici le [lien vers le google drive du projet][1].
 
 [1] : https://drive.google.com/drive/folders/1xI-tSFewnbJpa2LyrUyNPgijisipsltO?usp=sharing "lien drive"
+
+
+Le site web du [Programming Historian][2] fournit un exemple.
+
+
+
+[2]: http://programminghistorian.org/ "The Programming Historian"
