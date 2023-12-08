@@ -107,18 +107,24 @@ class BaselineTrainer:
     def train(
         self, num_opt_steps: int = 20000, batch_size: int = 16, lr: float = 5.0e-3
     ) -> None:
-        dataset = create_dataloader(
-            path_to_data=os.path.join(os.getcwd(), "student_set", "train"),
-            batch_size=batch_size,
-        )
-        model = Translator()
+
+        encoder = Encoder()
+        decoder = Decoder()
         if not self.quiet_mode:
             summary(model, input_size=(batch_size, 3, 224, 224))
-        model = model.to(self.device)
+
+        encoder = encoder.to(self.device)
+        decoder = decoder.to(self.device)
+
         scaler = MPScaler()
-        optimizer = torch.optim.Adam(params=model.parameters(), lr=lr)
+
+        encoder_optimizer = optim.Adam(params=encoder.parameters(), lr=lr)
+        decoder_optimizer = optim.Adam(params=decoder.parameters(), lr=lr)
+        
         loss_fn = Loss()
+
         pbar = pybar(range(num_opt_steps), base_str="training")
+
         current_progression = 0
         try:
             with self.scope:
@@ -126,13 +132,24 @@ class BaselineTrainer:
                     for inputs, labels in dataset:
                         if not self.quiet_mode:
                             pbar.__next__()
+
                         current_progression += 1
-                        optimizer.zero_grad()
+                        encoder_optimizer.zero_grad()
+                        decoder_optimizer.zero_grad()
+
+                        # À MODIFIER
                         inputs = inputs.to(self.device)
                         labels = labels.to(self.device)
-                        predictions = model(inputs)
+
+                        output, hidden = encoder(inputs)
+                        sortie_decoder = decoder(inputs, hidden)
+
+                        # CHANGER LA FONCTION LOSS ET METTRE LES INPUTS ADÉQUATS
                         loss = loss_fn(predictions, labels)
-                        scaler(loss=loss, optimizer=optimizer)
+
+                        scaler(loss=loss, optimizer=encoder_optimizer)
+                        scaler(loss=loss, optimizer=decoder_optimizer)
+
                         if not self.quiet_mode:
                             pbar.set_description(
                                 description=f"loss: {loss.cpu().detach().numpy():.4f}"

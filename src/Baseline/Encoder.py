@@ -1,44 +1,31 @@
-import torch
 import torch.nn as nn
+import torch.nn.init as init
+import torch.nn.functional as F
 
-class Decoder(nn.Module):
-    def __init__(self, input_dim, hidden_dim, context_dim):
-        super(Decoder, self).__init__()
-        #Init des matrices de poids 
-        # W, U, C, Wz, Uz, Cz, Wr, Ur, Cr sont des instances de nn.Parameter
-        
-        self.W = nn.Parameter(torch.randn(hidden_dim, input_dim))
-        self.U = nn.Parameter(torch.randn(hidden_dim, hidden_dim))
-        self.C = nn.Parameter(torch.randn(hidden_dim, context_dim))
+class Encoder(nn.Module):
+    def __init__(self, input_size, hidden_size, bidirectional=False, gaussian_sigma=0.01):
+        super(Encoder, self).__init__()
+        self.hidden_size = hidden_size
+        self.embedding = nn.Embedding(input_size, hidden_size)
 
-        self.Wz = nn.Parameter(torch.randn(hidden_dim, input_dim))
-        self.Uz = nn.Parameter(torch.randn(hidden_dim, hidden_dim))
-        self.Cz = nn.Parameter(torch.randn(hidden_dim, context_dim))
+        # L'encodeur pour RNN encoder decoder n'est pas bidirectionnel. Mettre bidirectional = True pour RNN search
+        self.gru = nn.GRU(hidden_size, hidden_size, bidirectional=bidirectional)
 
-        self.Wr = nn.Parameter(torch.randn(hidden_dim, input_dim))
-        self.Ur = nn.Parameter(torch.randn(hidden_dim, hidden_dim))
-        self.Cr = nn.Parameter(torch.randn(hidden_dim, context_dim))
-        
-    def calculate_context_vector(self):  
-        pass
+        # Il faut regarder comment sont initialisés les paramètres pour RNN search et mettre en commentaire la valeur.
+        # Si c'est pareil que pour RNNencdec c'est super
+        self.init_weights(gaussian_sigma)
 
-    def forward(self, Ey_minus_1, s_minus_1):
-        #Calcue de ci
-        ci = self.calculate_context_vector(...)
+        self.linear = nn.Linear(input_size, input_size)
 
-        # Calcule de ri, zi, si_tilde
-        ri = torch.sigmoid(self.Wr @ Ey_minus_1 + self.Ur @ s_minus_1 + self.Cr @ ci)
+    def init_weights(self, sigma):
+        for name, param in self.gru.named_parameters():
+            if 'weight' in name:
+                init.normal_(param.data, mean=0.0, std=sigma)
 
-        zi = torch.sigmoid(self.Wz @ Ey_minus_1 + self.Uz @ s_minus_1 + self.Cz @ ci)
+    def forward(self, input, hidden):
+        embedded = self.embedding(input).view(1, 1, -1)
+        output, hidden = self.gru(embedded, hidden)
+        hidden = self.linear(hidden)
+        hidden = F.tanh(hidden)
 
-        si_tilde = torch.tanh(self.W @ Ey_minus_1 + self.U @ (ri * s_minus_1) + self.C @ ci)
-
-        # Calcule de si
-        si = (1 - zi) * s_minus_1 + zi * si_tilde
-        return si
-
-# input_dim : #dimension de l'embedding du mot (Ey_minus_1).
-# hidden_dim : #dimension de l'état caché (s_minus_1, si).
-# context_dim :dimension du vecteur de contexte (ci).
-
-#Again, m and n are the word embedding dimensionality and the number of hidden units, respectively
+        return output, hidden
