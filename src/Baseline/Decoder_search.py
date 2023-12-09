@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 import torch.nn as nn
+from attention import Attention
 
 class Maxout(nn.Module):
     def __init__(self, input_dim, out_dim, pool_size):
