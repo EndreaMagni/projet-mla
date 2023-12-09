@@ -15,7 +15,7 @@ class Encoder(nn.Module):
         # Si c'est pareil que pour RNNencdec c'est super
         self.init_weights(gaussian_sigma)
 
-        self.linear = nn.Linear(input_size, input_size)
+        self.V = nn.Linear(input_size, input_size)
 
     def init_weights(self, sigma):
         for name, param in self.gru.named_parameters():
@@ -25,7 +25,7 @@ class Encoder(nn.Module):
     def forward(self, input, hidden):
         embedded = self.embedding(input).view(1, 1, -1)
         output, hidden = self.gru(embedded, hidden)
-        hidden = self.linear(hidden)
+        hidden = self.V(hidden)
         hidden = F.tanh(hidden)
 
         return output, hidden
