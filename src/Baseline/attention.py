@@ -20,7 +20,7 @@ class Maxout(nn.Module):
         m, _ = out.view(*shape).max(-1)
         return m
 
-class Attention1(nn.Module):
+class Attention(nn.Module):
     # Initialisation du module d'attention
     def __init__(self, enc_hidden_size, dec_hidden_size, attn_dim, maxout_pool_size, deep_output_layers):
         super(Attention1, self).__init__()
