@@ -10,7 +10,7 @@ class Encoder(nn.Module):
         self.hidden_size = hidden_size
         self.embedding_size = embedding_size
         self.embedding = nn.Embedding(input_size, embedding_size)
-        self.bi_RNN=nn.RNN(input_size=embedding_size,
+        self.bi_RNN=nn.GRU(input_size=embedding_size,
                             hidden_size=hidden_size,
                             bidirectional=True)
         
