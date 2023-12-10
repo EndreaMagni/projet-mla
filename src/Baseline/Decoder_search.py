@@ -37,13 +37,14 @@ class Decoder(nn.Module):
         self.fc = nn.Linear(maxout_size, vocab_size)
                  
 
-    def forward(self, input, hidden, context):
+    def forward(self, input, hidden, encoder_outputs):
+    
         # Embedding du mot yi-1
         input = input.unsqueeze(0)
         embedded = self.embedding(input)
         embedded =self.dropout(embedded)
     
-        context, _ = self.attn(last_hidden[-1], encoder_outputs, mask)#mask??
+        context ,_ = self.attn(hidden, encoder_outputs)
         
         # Concaténation avec le vecteur de contexte
         gru_input = torch.cat((embedded, context.unsqueeze(0)), 2)
