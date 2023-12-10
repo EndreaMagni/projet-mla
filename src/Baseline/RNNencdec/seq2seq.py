@@ -1,8 +1,9 @@
 import torch
 import torch.nn as nn
-from encoder import Encoder
-from decoder import Decoder
-    
+from Baseline.RNNencdec.encoder import Encoder
+from Baseline.RNNencdec.decoder import Decoder
+from Baseline.configuration import config as cfg
+
 class Seq2Seq(nn.Module):
 
     def __init__(self, encoder, decoder, device):

@@ -4,13 +4,18 @@ from typing import Any
 import numpy as np
 import torch
 import torchvision
+import torch.nn as nn
 from loadingpy import pybar
 from torchinfo import summary
 
-from .architecture import Translator
-# from .dataloader import create_dataloader
-from .loss import Loss
+from RNNencdec.encoder import Encoder
+from RNNencdec.decoder import Decoder
+from RNNencdec.seq2seq import Seq2Seq
+from configuration import config as cfg
 
+# from .dataloader import create_dataloader
+# from .loss import Loss
+import random
 
 class BlankStatement:
     def __init__(self):
@@ -22,145 +27,87 @@ class BlankStatement:
     def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any):
         return None
 
-
-class EndNestedLoop(Exception):
-    def __init__(self, message="", errors=""):
-        super().__init__(message)
-        self.errors = errors
-
-
-class MPScaler:
-    def __init__(self) -> None:
-        if torch.cuda.is_available():
-            self.scaler = torch.cuda.amp.GradScaler()
-        else:
-            self.scaler = None
-
-    def __call__(
-        self,
-        loss: torch.Tensor,
-        optimizer: torch.optim.Optimizer,
-        *args: Any,
-        **kwds: Any,
-    ) -> Any:
-        if self.scaler is None:
-            loss.backward()
-            optimizer.step()
-        else:
-            self.scaler.scale(loss).backward()
-            self.scaler.step(optimizer)
-            self.scaler.update()
-
-
 class BaselineTrainer:
+
     def __init__(self, quiet_mode: bool) -> None:
-        self.quiet_mode = quiet_mode
-        if torch.cuda.is_available():
-            self.device = torch.device("cuda")
-        elif torch.backends.mps.is_available():
-            self.device = torch.device("mps")
-        else:
-            self.device = torch.device("cpu")
 
-        # if not os.path.exists(os.path.join(os.getcwd(), "submissions")):
-        #     os.mkdir(os.path.join(os.getcwd(), "submissions"))
-        # if not os.path.exists(os.path.join(os.getcwd(), "submissions", "baseline")):
-        #     os.mkdir(os.path.join(os.getcwd(), "submissions", "baseline"))
 
-        # self.sigmoid = torch.nn.Sigmoid()
-        self.scope = (
-            torch.cuda.amp.autocast() if torch.cuda.is_available() else BlankStatement()
-        )
+        if torch.cuda.is_available():           self.device = torch.device("cuda")
+        elif torch.backends.mps.is_available(): self.device = torch.device("mps")
+        else:                                   self.device = torch.device("cpu")
 
-    def make_final_predictions(
-        self, model: torch.nn.Module, batch_size: int = 16
-    ) -> None:
-        # dataset = create_dataloader(
-        #     path_to_data=os.path.join(os.getcwd(), "student_set", "test"),
-        #     batch_size=batch_size,
-        # )
-        model.eval()
-        cpt = 0
-        with torch.no_grad():
-            with self.scope:
-                for inputs, original_sizes in pybar(
-                    dataset, base_str="extract on the test set"
-                ):
-                    inputs = inputs.to(self.device)
-                    predictions = torch.round(model(inputs))
-                    for prediction, original_size in zip(predictions, original_sizes):
-                        _, W, H = original_size
-                        prediction = torchvision.transforms.Resize(
-                            size=(W, H), antialias=True
-                        )(prediction)
-                        np.save(
-                            os.path.join(
-                                os.getcwd(),
-                                "submissions",
-                                "baseline",
-                                str(cpt).zfill(6) + ".npy",
-                            ),
-                            torch.round(self.sigmoid(prediction)).cpu().numpy(),
-                        )
-                        cpt += 1
+        self.quiet_mode         = quiet_mode
+        self.scope              = (torch.cuda.amp.autocast() if torch.cuda.is_available() else BlankStatement())
 
-    def train(
-        self, num_opt_steps: int = 20000, batch_size: int = 16, lr: float = 5.0e-3
-    ) -> None:
+    def make_batch(self,data):
+        pairs                   = [(item['translation']['en'], item['translation']['fr']) for item in data]
+        random.shuffle(pairs)
+        batches                 = [pairs[i:i + cfg.batch_size] for i in range(0, len(pairs), cfg.batch_size)]
 
-        encoder = Encoder()
-        decoder = Decoder()
-        if not self.quiet_mode:
-            summary(model, input_size=(batch_size, 3, 224, 224))
+        return batches
 
-        encoder = encoder.to(self.device)
-        decoder = decoder.to(self.device)
+    def one_hot_encode_batch(self,batch,vocab_size,word_to_id_eng,word_to_id_fr):
+        input_batch = []
+        output_batch = []
+        for pair in batch: 
+            input_batch.append([np.eye(vocab_size)[[word_to_id_eng[n] for n in pair[0]]]])
+            output_batch.append([np.eye(vocab_size)[[word_to_id_fr[n] for n in pair[1]]]])
 
-        scaler = MPScaler()
+            return input_batch,output_batch
 
-        encoder_optimizer = optim.Adam(params=encoder.parameters(), lr=lr)
-        decoder_optimizer = optim.Adam(params=decoder.parameters(), lr=lr)
+    def train(self, train_data, word_to_id_eng, word_to_id_fr) :
         
-        loss_fn = Loss()
+        batches         = self.make_batch(train_data)
 
-        pbar = pybar(range(num_opt_steps), base_str="training")
+        encoder         = Encoder(cfg.input_size,
+                                  cfg.embedding_size,
+                                  cfg.hidden_size)
+        
+        decoder         = Decoder(cfg.output_size,
+                                  cfg.embedding_size,
+                                  cfg.hidden_size)
 
-        current_progression = 0
-        try:
-            with self.scope:
-                while True:
-                    for inputs, labels in dataset:
-                        if not self.quiet_mode:
-                            pbar.__next__()
+        device          = self.device
 
-                        current_progression += 1
-                        encoder_optimizer.zero_grad()
-                        decoder_optimizer.zero_grad()
+        model           = Seq2Seq(encoder, 
+                                  decoder, 
+                                  device).to(device)
 
-                        # À MODIFIER
-                        inputs = inputs.to(self.device)
-                        labels = labels.to(self.device)
+        if not self.quiet_mode:
+            summary(model, 
+                    input_size=(cfg.batch_size, 3, 224, 224))
 
-                        output, hidden = encoder(inputs)
-                        sortie_decoder = decoder(inputs, hidden)
 
-                        # CHANGER LA FONCTION LOSS ET METTRE LES INPUTS ADÉQUATS
-                        loss = loss_fn(predictions, labels)
+        optimizer       = torch.optim.Adadelta(epsilon=1e-6, rho=0.95)
+        
+        criterion       = nn.CrossEntropyLoss()
 
-                        scaler(loss=loss, optimizer=encoder_optimizer)
-                        scaler(loss=loss, optimizer=decoder_optimizer)
+        pbar            = pybar(range(epochs), base_str="training")
 
-                        if not self.quiet_mode:
-                            pbar.set_description(
-                                description=f"loss: {loss.cpu().detach().numpy():.4f}"
-                            )
-                        if current_progression == num_opt_steps:
-                            raise EndNestedLoop
-        except EndNestedLoop:
-            pass
+        with self.scope:
+            for epoch in range(cfg.epochs):
+                for batch in batches:
+                    if not self.quiet_mode: pbar.__next__()
+                    
+                    input_batch,output_batch    = self.one_hot_encode_batch(batch,len(word_to_id_eng),word_to_id_eng,word_to_id_fr)
+                    
+                    input_batch                 = torch.FloatTensor(input_batch)
+                    output_batch                = torch.FloatTensor(output_batch)
+                    
+                    optimizer.zero_grad()
+                    
+                    output                      = model(input_batch)
+
+                    loss                        = criterion(output, output_batch)
+                    loss.backward()
+                    
+                    optimizer.step()
+
+                if not self.quiet_mode      : pbar.set_description(description=f"loss: {loss.cpu().detach().numpy():.4f}")
+                
+
         try:
             pbar.__next__()
         except StopIteration:
             pass
-        
-        self.make_final_predictions(model=model, batch_size=batch_size)
+
