@@ -64,11 +64,11 @@ class BaselineTrainer:
     def one_hot_encode_batch(self,batch,vocab_size,word_to_id_eng,word_to_id_fr):
         input_batch = []
         output_batch = []
-        for pair in batch: 
+        for i,pair in enumerate(batch): 
             input_batch.append([np.eye(vocab_size)[[word_to_id_eng[n] for n in pair[0]]]])
             output_batch.append([np.eye(vocab_size)[[word_to_id_eng[n] for n in pair[0]]]])
 
-            return input_batch,output_batch
+        return input_batch,output_batch
     
     def Init_weights(self, m):
         for name, param in m.named_parameters():
@@ -116,11 +116,12 @@ class BaselineTrainer:
                 print(np.array(batches).shape)
                 for batch in [batches[0]]:
                     if not self.quiet_mode: pbar.__next__()
-                    print(np.array(batch).shape)
+
                     input_batch,output_batch    = self.one_hot_encode_batch(batch,len(word_to_id_eng),word_to_id_eng,word_to_id_fr)
                     
                     input_batch                 = np.array(input_batch)
-                    print(input_batch.shape)
+                    print("a",input_batch.shape)
+
                     input_batch                 = torch.from_numpy(input_batch)#.squeeze(dim=1)
                     input_batch                 = input_batch.long()
                     output_batch                = np.array(output_batch)
@@ -135,11 +136,11 @@ class BaselineTrainer:
 
                     loss                        = criterion(output, output_batch)
                     loss.backward()
-                    
+                    print("azd")
                     optimizer.step()
 
                     loss_for_one_epoch          += loss.item()
-
+                    print("b")
                 if not self.quiet_mode      : pbar.set_description(description=f"loss: {loss.cpu().detach().numpy():.4f}")
                 
                 all_loss                    += [loss_for_one_epoch]
@@ -153,6 +154,6 @@ class BaselineTrainer:
                                 f"{self.dir}/model_{epoch}.pth")
 
         
-        try : pbar.__next__()
-        except StopIteration : pass
+        pbar.__next__()
+        # except StopIteration : pass
 

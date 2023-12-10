@@ -22,7 +22,8 @@ class Encoder(nn.Module):
 
     def forward(self, input_token_sequence):
 
-        embedded            = self.embedding(input_token_sequence).squeeze(dim=0).squeeze(dim=0)
+        embedded            = self.embedding(input_token_sequence)
+        print("b",embedded.size())
 
         
         output,hidden_state = self.gru(embedded)
