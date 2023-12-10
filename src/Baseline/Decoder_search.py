@@ -20,7 +20,7 @@ class Maxout(nn.Module):
 
     
 class Decoder(nn.Module):
-    def __init__(self, vocab_size, hidden_size, context_size,embedding_size,maxout_size):
+    def __init__(self, vocab_size, hidden_size,embedding_size,maxout_size):
         super(Decoder, self).__init__()
        
         self.input_size= hidden_size*2 
@@ -30,19 +30,20 @@ class Decoder(nn.Module):
         
         self.embedding = nn.Embedding(vocab_size, embedding_size)
 
-        self.gru = nn.GRU(self.input_size + context_size, hidden_size)
+        self.gru = nn.GRU(self.input_size + embedding_size, hidden_size,batch_first=True)
+
     
-        self.maxout = Maxout(hidden_size * 2 + context_size, maxout_size)
+        self.maxout = Maxout(hidden_size * 2 + embedding_size + hidden_size, maxout_size) maxout=500
         
         self.fc = nn.Linear(maxout_size, vocab_size)
                  
 
     def forward(self, input, hidden, encoder_outputs):
     
-        # Embedding du mot yi-1
-        input = input.unsqueeze(0)
-        embedded = self.embedding(input)
-        embedded =self.dropout(embedded)
+        # Input = batch (80 phrases en anglais)
+        input = input.unsqueeze(0) # [1,batch_size] ( batch_size = 30 (ou 50) * 80 (taille du lot)* input_size)
+        embedded = self.embedding(input) # [1 ,batch_size, emb_size] = [1, 30*80*30000, 620]
+       
     
         context ,_ = self.attn(hidden, encoder_outputs)
         

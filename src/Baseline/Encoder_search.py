@@ -12,7 +12,8 @@ class Encoder(nn.Module):
         self.embedding = nn.Embedding(input_size, embedding_size)
         self.bi_RNN=nn.GRU(input_size=embedding_size,
                             hidden_size=hidden_size,
-                            bidirectional=True)
+                            bidirectional=True,
+                            batch_first=True)
         
         
     def forward(self, input):
