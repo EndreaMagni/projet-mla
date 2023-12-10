@@ -27,7 +27,7 @@ class MaxoutLayer(nn.Module):
     
 
 class Decoder(nn.Module):
-    def __init__(self, output_size, embedding_size, hidden_size):
+    def __init__(self, output_size, embedding_size, hidden_size, maxout_size):
         super(Decoder, self).__init__()
 
         self.embedding      = nn.Embedding(output_size, 
@@ -37,10 +37,10 @@ class Decoder(nn.Module):
                                      hidden_size)
         
         self.fc1            = MaxoutLayer(embedding_size + hidden_size * 2,
-                                          500, 
+                                          maxout_size, 
                                           2)
 
-        self.fc2            = nn.Linear(500, 
+        self.fc2            = nn.Linear(maxout_size, 
                                         output_size)
 
     def forward(self, input_token, hidden_state, context_vector):
