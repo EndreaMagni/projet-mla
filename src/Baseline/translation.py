@@ -5,13 +5,15 @@ import numpy as np
 import torch
 import torchvision
 import torch.nn as nn
-from loadingpy import pybar
-from torchinfo import summary
+import torch.nn.init as init
 
-from RNNencdec.encoder import Encoder
-from RNNencdec.decoder import Decoder
-from RNNencdec.seq2seq import Seq2Seq
-from configuration import config
+from loadingpy import pybar
+from torchsummary import summary
+
+from Baseline.RNNencdec.encoder import Encoder
+from Baseline.RNNencdec.decoder import Decoder
+from Baseline.RNNencdec.seq2seq import Seq2Seq
+from Baseline.configuration import config
 from easydict import EasyDict
 cfg = EasyDict(config)
 
@@ -67,6 +69,12 @@ class BaselineTrainer:
             output_batch.append([np.eye(vocab_size)[[word_to_id_fr[n] for n in pair[1]]]])
 
             return input_batch,output_batch
+    
+    def Init_weights(self, m):
+        for name, param in m.named_parameters():
+            if 'weight_hh' in name  : init.orthogonal_(param.data) 
+            elif 'weight' in name   : nn.init.normal_(param.data, mean=0, std=0.01)  
+            else                    : nn.init.constant_(param.data, 0)
 
     def train(self, train_data, word_to_id_eng, word_to_id_fr) :
         
@@ -87,11 +95,13 @@ class BaselineTrainer:
                                   decoder, 
                                   device).to(device)
 
+        model.apply(self.Init_weights)
+        
         # il faut rectifier l'input size pour le summary
-        if not self.quiet_mode : summary(model, input_size=(cfg.batch_size, 3, 224, 224))
+        if not self.quiet_mode : summary(model, input_size=(cfg.batch_size, cfg.sequence_length))
 
 
-        optimizer       = torch.optim.Adadelta(epsilon=1e-6, rho=0.95)
+        optimizer       = torch.optim.Adadelta(model.parameters())
         
         criterion       = nn.CrossEntropyLoss()
 
@@ -127,8 +137,14 @@ class BaselineTrainer:
                 
                 all_loss                    += [loss_for_one_epoch]
 
-                if epoch % cfg.save_loss_ite == 0 : 
+                if epoch % cfg.save_loss_ite == 0 and epoch != 0 : 
                     np.save(f"{self.dir}/loss.npy", np.array(all_loss))
+
+                if epoch % cfg.save_model_ite == 0 and epoch != 0 :
+                    torch.save({'model_state_dict': model.state_dict(),
+                                'optimizer_state_dict': optimizer.state_dict()}, 
+                                f"{self.dir}/model_{epoch}.pth")
+
         
         try : pbar.__next__()
         except StopIteration : pass
