@@ -1,31 +1,28 @@
 import torch.nn as nn
-import torch.nn.init as init
-import torch.nn.functional as F
+# import torch.nn.init as init
 
 class Encoder(nn.Module):
-    def __init__(self, input_size, hidden_size, bidirectional=False, gaussian_sigma=0.01):
+    def __init__(self, input_size, embedding_size, hidden_size, gaussian_sigma=0.01):
         super(Encoder, self).__init__()
-        self.hidden_size = hidden_size
-        self.embedding = nn.Embedding(input_size, hidden_size)
 
-        # L'encodeur pour RNN encoder decoder n'est pas bidirectionnel. Mettre bidirectional = True pour RNN search
-        self.gru = nn.GRU(hidden_size, hidden_size, bidirectional=bidirectional)
+        self.hidden_size    = hidden_size
 
-        # Il faut regarder comment sont initialisés les paramètres pour RNN search et mettre en commentaire la valeur.
-        # Si c'est pareil que pour RNNencdec c'est super
-        self.init_weights(gaussian_sigma)
+        self.embedding      = nn.Embedding(input_size, 
+                                           embedding_size)
 
-        self.V = nn.Linear(input_size, input_size)
+        self.gru            = nn.GRU(embedding_size, 
+                                     hidden_size)
 
-    def init_weights(self, sigma):
-        for name, param in self.gru.named_parameters():
-            if 'weight' in name:
-                init.normal_(param.data, mean=0.0, std=sigma)
+    #     self.init_weights(gaussian_sigma)
+    # def init_weights(self, sigma):
+    #     for name, param in self.gru.named_parameters():
+    #         if 'weight' in name:
+    #             init.normal_(param.data, mean=0.0, std=sigma)
 
-    def forward(self, input, hidden):
-        embedded = self.embedding(input).view(1, 1, -1)
-        output, hidden = self.gru(embedded, hidden)
-        hidden = self.V(hidden)
-        hidden = F.tanh(hidden)
+    def forward(self, input_token_sequence):
 
-        return output, hidden
+        embedded = self.embedding(input_token_sequence)
+
+        output, hidden_state = self.gru(embedded, hidden)
+
+        return hidden_state
