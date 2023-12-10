@@ -33,14 +33,16 @@ def train(model,train_data,word_to_id_eng,word_to_id_fr,learning_rate,batch_size
             input_batch = torch.FloatTensor(input_batch)
             output_batch = torch.FloatTensor(output_batch)
             optimizer.zero_grad()
-            output, hidden = model(input_batch)
+            output = model(input_batch)
             loss = criterion(output, output_batch)
             loss.backward()
             optimizer.step()
         if epoch % print_every == 0:
             print('Epoch: ', '%04d' % (epoch + 1), 'loss =', '{:.6f}'.format(loss))
+            
     print('Training Finished')
           
+     
 
     
 
