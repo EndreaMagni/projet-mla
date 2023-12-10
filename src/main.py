@@ -66,11 +66,11 @@ if __name__ == "__main__":
     if args.train:
         from Baseline.translation import BaselineTrainer
 
-        train_data = load_from_disk('/Users/travail/Desktop/mini_dataset')
+        data = load_from_disk('projet-mla/mini_dataset')
 
 
-        eng_vocab_path                          = '/Users/travail/Documents/GitHub/projet-mla/30k_eng.txt'
-        fr_vocab_path                           = '/Users/travail/Documents/GitHub/projet-mla/30k_fr.txt'
+        eng_vocab_path                          = 'projet-mla/30k_eng.txt'
+        fr_vocab_path                           = 'projet-mla/30k_fr.txt'
         with open(eng_vocab_path, 'r') as file  : eng_vocab = [line.strip() for line in file]
         with open(fr_vocab_path, 'r') as file   : fr_vocab = [line.strip() for line in file]
         word_dict_eng                           = { word.strip() : i for i, word in enumerate(eng_vocab)}

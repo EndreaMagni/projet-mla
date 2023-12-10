@@ -1,7 +1,7 @@
 config = {
     "vocabulary_size"       : 30000,
-    "input_size"            : 30000,
-    "output_size"           : 30000,
+    "input_size"            : 50,
+    "output_size"           : 50,
     "embedding_size"        : 620,
     "hidden_size"           : 1000,
     "maxout_size"           : 500,

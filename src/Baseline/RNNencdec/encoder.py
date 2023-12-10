@@ -21,8 +21,9 @@ class Encoder(nn.Module):
     #             init.normal_(param.data, mean=0.0, std=sigma)
 
     def forward(self, input_token_sequence):
-
+        print("dimensions de l'input token : ",input_token_sequence.size())
         embedded            = self.embedding(input_token_sequence)
+        print("dimensions de l'embedded : ", embedded.size())
         print("b",embedded.size())
 
         

@@ -7,6 +7,7 @@ import torchvision
 import torch.nn as nn
 import torch.nn.init as init
 
+from torchtext.data import BucketIterator
 from loadingpy import pybar
 from torchsummary import summary
 
@@ -76,6 +77,12 @@ class BaselineTrainer:
             elif 'weight' in name   : nn.init.normal_(param.data, mean=0, std=0.01)  
             else                    : nn.init.constant_(param.data, 0)
 
+    def different_approach(self, train_data, valid_data, test_data):
+        self.train_iterator, self.valid_iterator, self.test_iterator = BucketIterator.splits(
+                (train_data, valid_data, test_data), 
+                batch_size = cfg.batch_size, 
+                device = self.device)
+
     def train(self, train_data, word_to_id_eng, word_to_id_fr) :
         
         batches         = self.make_batch(train_data)
@@ -98,7 +105,7 @@ class BaselineTrainer:
         model.apply(self.Init_weights)
         
         # il faut rectifier l'input size pour le summary
-        if not self.quiet_mode : summary(model, input_size=(cfg.batch_size, cfg.sequence_length))
+        # if not self.quiet_mode : summary(model, input_size=(cfg.batch_size, cfg.sequence_length))
 
 
         optimizer       = torch.optim.Adadelta(model.parameters())
@@ -114,18 +121,18 @@ class BaselineTrainer:
 
                 loss_for_one_epoch = 0
                 print(np.array(batches).shape)
+                
                 for batch in [batches[0]]:
                     if not self.quiet_mode: pbar.__next__()
 
                     input_batch,output_batch    = self.one_hot_encode_batch(batch,len(word_to_id_eng),word_to_id_eng,word_to_id_fr)
                     
                     input_batch                 = np.array(input_batch)
-                    print("a",input_batch.shape)
-
-                    input_batch                 = torch.from_numpy(input_batch)#.squeeze(dim=1)
+                    input_batch                 = torch.from_numpy(input_batch)
                     input_batch                 = input_batch.long()
+                    
                     output_batch                = np.array(output_batch)
-                    output_batch                = torch.from_numpy(output_batch)#.squeeze(dim=1)
+                    output_batch                = torch.from_numpy(output_batch)
                     output_batch                = output_batch.long()
 
                     print(input_batch.size(),output_batch.size())
