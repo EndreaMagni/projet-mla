@@ -57,7 +57,7 @@ class Decoder(nn.Module):
         maxout_output=self.maxout(torch.cat((maxout_input, context, embedded), dim = 1))
 
         output_fc = self.fc(maxout_output)
-        output=F.softmax(output_layer)
+        output=F.softmax(output_fc)
 
         return output, hidden 
         
