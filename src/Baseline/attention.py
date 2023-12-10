@@ -29,7 +29,7 @@ class Attention(nn.Module):
         e_ij = torch.tanh(e_ij)
 
         # Application du masque et calcul des poids d'attention
-        e_ij.data.masked_fill_(mask, -float('inf'))
+        #e_ij.data.masked_fill_(mask, -float('inf'))
         alpha_ij = F.softmax(e_ij, dim=1)
 
         # Calcul du vecteur de contexte
