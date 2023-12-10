@@ -4,7 +4,7 @@ import torch.nn as nn
 from attention import Attention
 
 class Maxout(nn.Module):
-    def __init__(self, input_dim, out_dim, pool_size):
+    def __init__(self, input_dim, out_dim, pool_size=1):
         super(Maxout, self).__init__()
         # the size of the maxout hidden laye : out_dim = 500    
         self.out_features = out_dim
@@ -32,9 +32,9 @@ class Decoder(nn.Module):
 
         self.gru = nn.GRU(self.input_size + context_size, hidden_size)
     
-        self.maxout = Maxout(hidden_size * 2 + context_size, maxout_size, pool_size=2)
+        self.maxout = Maxout(hidden_size * 2 + context_size, maxout_size)
         
-        self.final = nn.Linear(maxout_size, vocab_size)
+        self.fc = nn.Linear(maxout_size, vocab_size)
                  
 
     def forward(self, input, hidden, context):
