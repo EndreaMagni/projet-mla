@@ -20,15 +20,15 @@ def one_hot_encode_batch(batch,vocab_size,word_to_id_eng,word_to_id_fr):
 
         return input_batch,output_batch
 
-def train(model,train_data,word_to_id_eng,word_to_id_fr,learning_rate,batch_size,epochs):
+def train(model,train_data,word_to_id_eng,word_to_id_fr,learning_rate,batch_size,epochs,print_every=1):
     # Initialize Adadelta optimizer with the given epsilon and rho values
     optimizer = torch.optim.Adadelta(epsilon=1e-6, rho=0.95)
 
     criterion = nn.CrossEntropyLoss()
 
     for epoch in range(epochs):
-        batches = make_batch(train_data,batch_size)
-        for batch in batches:
+        
+        for batch in train_data:
             input_batch,output_batch = one_hot_encode_batch(batch,len(word_to_id_eng),word_to_id_eng,word_to_id_fr)
             input_batch = torch.FloatTensor(input_batch)
             output_batch = torch.FloatTensor(output_batch)
@@ -37,6 +37,10 @@ def train(model,train_data,word_to_id_eng,word_to_id_fr,learning_rate,batch_size
             loss = criterion(output, output_batch)
             loss.backward()
             optimizer.step()
-        print('Epoch: ', '%04d' % (epoch + 1), 'loss =', '{:.6f}'.format(loss))
+        if epoch % print_every == 0:
+            print('Epoch: ', '%04d' % (epoch + 1), 'loss =', '{:.6f}'.format(loss))
+    print('Training Finished')
+          
 
+    
 

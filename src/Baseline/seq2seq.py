@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from collections import namedtuple
 Hypothesis = namedtuple('Hypothesis', ['value', 'score'])
+
 class seq2seq(nn.Module):
     # Initialisation du modèle seq2seq avec encodeur et décodeur
     def __init__(self,encoder,decoder):
