@@ -6,8 +6,7 @@ from attention import Attention
 class Maxout(nn.Module):
     def __init__(self, input_dim, out_dim, pool_size):
         super(Maxout, self).__init__()
-        # the size of the maxout hidden laye : out_dim = 500
-        self.input_dim = input_dim
+        # the size of the maxout hidden laye : out_dim = 500    
         self.out_features = out_dim
         self.pool_size = pool_size
         self.lin = nn.Linear(input_dim, out_dim * pool_size)
@@ -21,7 +20,7 @@ class Maxout(nn.Module):
 
     
 class Decoder(nn.Module):
-    def __init__(self, vocab_size, hidden_size, context_size,embedding_size):
+    def __init__(self, vocab_size, hidden_size, context_size,embedding_size,maxout_size):
         super(Decoder, self).__init__()
        
         self.input_size= hidden_size*2 
@@ -33,9 +32,9 @@ class Decoder(nn.Module):
 
         self.gru = nn.GRU(self.input_size + context_size, hidden_size)
     
-        self.maxout = Maxout(hidden_size * 2 + context_size, output_size, pool_size=2)
+        self.maxout = Maxout(hidden_size * 2 + context_size, maxout_size, pool_size=2)
         
-        self.final = nn.Linear(output_size, vocab_size)
+        self.final = nn.Linear(maxout_size, vocab_size)
                  
 
     def forward(self, input, hidden, context):
