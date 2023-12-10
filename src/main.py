@@ -73,8 +73,8 @@ if __name__ == "__main__":
         fr_vocab_path                           = '/Users/travail/Documents/GitHub/projet-mla/30k_fr.txt'
         with open(eng_vocab_path, 'r') as file  : eng_vocab = [line.strip() for line in file]
         with open(fr_vocab_path, 'r') as file   : fr_vocab = [line.strip() for line in file]
-        word_dict_fr                            = {i: word.strip() for i, word in enumerate(fr_vocab)}
-        word_dict_eng                           = {i: word.strip() for i, word in enumerate(eng_vocab)}
+        word_dict_eng                           = { word.strip() : i for i, word in enumerate(eng_vocab)}
+        word_dict_fr                            = { word.strip() : i for i, word in enumerate(fr_vocab)}
 
         BaselineTrainer(quiet_mode=args.q).train(train_data, 
                                                  word_dict_eng, 

@@ -8,7 +8,7 @@ config = {
 
     "sequence_length"       : 50,
     "lr"                    : None,
-    "batch_size"            : 80,
+    "batch_size"            : 10,
     
     "epochs"                : int(1e6),
 

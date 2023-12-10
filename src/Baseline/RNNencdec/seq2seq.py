@@ -17,7 +17,7 @@ class Seq2Seq(nn.Module):
                 
         target_size, batch_size = target_token_sequence.shape[:2]
 
-        vocabulary_size         = cfg.vocabulary_size
+        vocabulary_size         = cfg["vocabulary_size"]
         
         outputs                 = torch.zeros(target_size, 
                                               batch_size, 

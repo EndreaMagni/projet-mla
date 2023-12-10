@@ -66,7 +66,7 @@ class BaselineTrainer:
         output_batch = []
         for pair in batch: 
             input_batch.append([np.eye(vocab_size)[[word_to_id_eng[n] for n in pair[0]]]])
-            output_batch.append([np.eye(vocab_size)[[word_to_id_fr[n] for n in pair[1]]]])
+            output_batch.append([np.eye(vocab_size)[[word_to_id_eng[n] for n in pair[0]]]])
 
             return input_batch,output_batch
     
@@ -113,18 +113,25 @@ class BaselineTrainer:
             for epoch in range(cfg.epochs):
 
                 loss_for_one_epoch = 0
-
-                for batch in batches:
+                print(np.array(batches).shape)
+                for batch in [batches[0]]:
                     if not self.quiet_mode: pbar.__next__()
-                    
+                    print(np.array(batch).shape)
                     input_batch,output_batch    = self.one_hot_encode_batch(batch,len(word_to_id_eng),word_to_id_eng,word_to_id_fr)
                     
-                    input_batch                 = torch.FloatTensor(input_batch)
-                    output_batch                = torch.FloatTensor(output_batch)
-                    
+                    input_batch                 = np.array(input_batch)
+                    print(input_batch.shape)
+                    input_batch                 = torch.from_numpy(input_batch)#.squeeze(dim=1)
+                    input_batch                 = input_batch.long()
+                    output_batch                = np.array(output_batch)
+                    output_batch                = torch.from_numpy(output_batch)#.squeeze(dim=1)
+                    output_batch                = output_batch.long()
+
+                    print(input_batch.size(),output_batch.size())
+
                     optimizer.zero_grad()
                     
-                    output                      = model(input_batch)
+                    output                      = model(input_batch, output_batch)
 
                     loss                        = criterion(output, output_batch)
                     loss.backward()
