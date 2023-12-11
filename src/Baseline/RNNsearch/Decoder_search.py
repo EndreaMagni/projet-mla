@@ -1,7 +1,9 @@
 import torch
 import torch.nn.functional as F
 import torch.nn as nn
-from attention import Attention
+from Allignement import Allignement
+
+
     
 class Maxout(nn.Module):
     def __init__(self, input_dim, out_dim, pool_size=2):
@@ -20,7 +22,7 @@ class Maxout(nn.Module):
 
     
 class Decoder(nn.Module):
-    def __init__(self, vocab_size, hidden_size,embedding_size,maxout_unit):
+    def __init__(self, vocab_size, hidden_size,embedding_size,maxout_unit,allign_dim):
         super(Decoder, self).__init__()
 
         input_size_gru= hidden_size*3 + embedding_size
@@ -28,7 +30,7 @@ class Decoder(nn.Module):
         input_size_maxout= hidden_size*3 + embedding_size
         self.hidden_size=hidden_size
 
-        self.attention= Attention(input_size_attn, hidden_size, hidden_size)
+        self.Allignement= Allignement( hidden_size,allign_dim)
         
         self.embedding = nn.Embedding(vocab_size, embedding_size)
 
@@ -48,7 +50,7 @@ class Decoder(nn.Module):
         outputs = []
         for i in range(enc_out.size(1)) :
             # Calculer le vecteur de contexte avec le model d'alignement 
-            context, alpha_ij =self.attention(si , enc_out)
+            context, alpha_ij =self.Allignement(si , enc_out)
             attention_weights.append(alpha_ij)
 
             # Passage par la couche GRU

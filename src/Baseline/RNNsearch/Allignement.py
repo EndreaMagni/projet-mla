@@ -3,19 +3,19 @@ import torch.nn as nn
 import torch.nn.functional as F
 from collections import namedtuple
  
-class Attention(nn.Module):
-    # Initialisation du module d'attention
+class Allignement(nn.Module):
+    # Initialisation du module d'Allignement
     def __init__(self, hidden_size, attn_dim):
     
-        super(Attention, self).__init__()
+        super(Allignement, self).__init__()
 
-        # Définition des couches linéaires pour le calcul de l'attention
+        # Définition des couches linéaires pour le calcul de l'Allignement
         self.Wa = nn.Linear(hidden_size, attn_dim, bias=False)
         self.Ua = nn.Linear(hidden_size*2, attn_dim, bias=False)
         self.va = nn.Linear(attn_dim, 1, bias=False)
         #self.va = nn.Parameter(torch.rand(attn_dim, 1))
 
-    # Forward pass du module d'attention
+    # Forward pass du module d'Allignement
     def forward(self, enc_out, si):
         # context : si
         # ouput : enc_out 

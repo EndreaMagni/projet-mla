@@ -7,9 +7,9 @@ class Encoder(nn.Module):
     def __init__(self, input_size, hidden_size, embedding_size):
         super(Encoder,self).__init__()
 
-        self.hidden_size = hidden_size
-        self.embedding_size = embedding_size
+        
         self.embedding = nn.Embedding(input_size, embedding_size)
+        
         self.bi_RNN=nn.GRU(input_size=embedding_size,
                             hidden_size=hidden_size,
                             bidirectional=True,
