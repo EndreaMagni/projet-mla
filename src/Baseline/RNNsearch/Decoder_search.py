@@ -39,9 +39,9 @@ class Decoder(nn.Module):
         self.fc = nn.Linear(maxout_unit, vocab_size)
                  
 
-    def forward(self,enc_out):# hidden peut etre en in 
+    def forward(self,enc_out,hidden_enc):# hidden peut etre en in 
         batch_size = enc_out.size(0)
-        si= torch.zeros(1, batch_size ,self.hidden_size)
+        si= torch.zeros(1, batch_size ,self.hidden_size) #a initiliaser avec hidden_enc
 
         # faire for i in h[1]
         attention_weights=[]
