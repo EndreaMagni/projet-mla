@@ -17,10 +17,12 @@ class Encoder(nn.Module):
         
         
     def forward(self, input):
-        embedded=self.embedding(input.squeeze())
+        breakpoint()
+        embedded=self.embedding(input.view(-1, input.size(2)))
+        breakpoint()
         # GRU layer: forward and backward states are automatically handled by the GRU
         outputs,h_n= self.bi_RNN(embedded)  # outputs shape: (batch, seq_length, 2*hidden_size)
-        
+        breakpoint()
         # Concatenation of forward and backward states is already done within the GRU layer       
         return outputs,h_n
 

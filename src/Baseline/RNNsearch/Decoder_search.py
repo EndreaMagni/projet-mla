@@ -52,6 +52,7 @@ class Decoder(nn.Module):
         for i in range(enc_out.size(1)) :
             # Calculer le vecteur de contexte avec le model d'alignement 
             context, alpha_ij =self.Allignement(si , enc_out)
+            
             attention_weights.append(alpha_ij)
 
             # Passage par la couche GRU
