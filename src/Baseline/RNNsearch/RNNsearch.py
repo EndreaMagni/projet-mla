@@ -20,10 +20,8 @@ class RNNsearch(nn.Module):
         outputs = torch.zeros(batch_size,trg_len, trg_vocab_size)
 
         # Debugging: Try-catch block for encoder
-        try:
-            encoder_outputs, hidden_enc = self.encoder(src)
-        except Exception as e:
-            print("Error in encoder:", e)
+        
+        encoder_outputs, hidden_enc = self.encoder(src)
 
         outputs, attention_weights  = self.decoder(encoder_outputs,hidden_enc)                         
 

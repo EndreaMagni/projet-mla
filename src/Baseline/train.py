@@ -31,9 +31,10 @@ def train(model,train_data,word_to_id_eng,word_to_id_fr,batch_size,learning_rate
         
         for batch in batches:
             input_batch,output_batch = one_hot_encode_batch(batch,len(word_to_id_eng),word_to_id_eng,word_to_id_fr)
-            input_batch = torch.FloatTensor(input_batch)
-            print(input_batch.shape)
-            output_batch = torch.FloatTensor(output_batch)
+            #input_batch = torch.FloatTensor(input_batch)
+            print(np.shape(input_batch))
+            print(np.shape(output_batch))
+            #output_batch = torch.FloatTensor(output_batch)
             optimizer.zero_grad()
             output,attention_weights  = model(input_batch,batch_size)
             loss = criterion(output, output_batch)
