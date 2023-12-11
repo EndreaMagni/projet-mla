@@ -5,18 +5,19 @@ from Allignement import Allignement
 
 
 class RNNsearch(nn.Module):
-    def __init__(self, encoder, decoder, device):
+    def __init__(self, encoder, decoder):
         super(RNNsearch, self).__init__()
         self.encoder = encoder
         self.decoder = decoder
-        self.device = device
+        
 
-    def forward(self, src, trg, max_iterations):
-        batch_size,trg_len = trg.shape
+    def forward(self, src,batch_size):
+        
+        trg_len = src.size(2)
 
         trg_vocab_size = self.decoder.output_size
 
-        outputs = torch.zeros(batch_size,trg_len, trg_vocab_size).to(self.device)
+        outputs = torch.zeros(batch_size,trg_len, trg_vocab_size)
 
         # Debugging: Try-catch block for encoder
         try:

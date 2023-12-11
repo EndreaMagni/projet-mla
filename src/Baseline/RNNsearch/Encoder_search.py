@@ -9,7 +9,7 @@ class Encoder(nn.Module):
 
         
         self.embedding = nn.Embedding(input_size, embedding_size)
-        
+
         self.bi_RNN=nn.GRU(input_size=embedding_size,
                             hidden_size=hidden_size,
                             bidirectional=True,
@@ -17,7 +17,7 @@ class Encoder(nn.Module):
         
         
     def forward(self, input):
-        embedded=self.embedding(input)
+        embedded=self.embedding(input.squeeze())
         # GRU layer: forward and backward states are automatically handled by the GRU
         outputs,h_n= self.bi_RNN(embedded)  # outputs shape: (batch, seq_length, 2*hidden_size)
         

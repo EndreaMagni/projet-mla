@@ -11,7 +11,7 @@ class Maxout(nn.Module):
         # the size of the maxout hidden laye : out_dim = 500    
         self.out_features = out_dim
         self.pool_size = pool_size
-        self.lin = nn.Linear(input_dim, out_dim * pool_size)
+        self.linear = nn.Linear(input_dim, out_dim * pool_size)
 
     def forward(self, x):
         # Maxout operation
@@ -29,6 +29,7 @@ class Decoder(nn.Module):
         input_size_attn= hidden_size*3
         input_size_maxout= hidden_size*3 + embedding_size
         self.hidden_size=hidden_size
+        self.output_size = vocab_size
 
         self.Allignement= Allignement( hidden_size,allign_dim)
         
