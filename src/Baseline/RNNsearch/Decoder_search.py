@@ -26,11 +26,11 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
 
         input_size_gru= hidden_size*2 + embedding_size
-        input_size_attn= hidden_size*3
         input_size_maxout= hidden_size*3 + embedding_size
         self.hidden_size=hidden_size
         self.output_size = vocab_size
         self.vocab_size = vocab_size
+
         self.Allignement= Allignement( hidden_size,allign_dim)
         
         # self.embedding = nn.Embedding(vocab_size, embedding_size)
@@ -40,12 +40,16 @@ class Decoder(nn.Module):
         self.maxout = Maxout(input_size_maxout , maxout_unit) # maxout=500
         
         self.fc = nn.Linear(maxout_unit, vocab_size)
+
+        self.lin= nn.Linear(hidden_size,hidden_size)
+  
                  
 
     def forward(self,enc_out,hidden_enc):# hidden peut etre en in 
         batch_size = enc_out.size(0)
-        si= torch.zeros(1,batch_size ,self.hidden_size) #a initiliaser avec hidden_enc
+        #si= torch.zeros(1,batch_size ,self.hidden_size) #a initiliaser avec hidden_enc
 
+        si =torch.tanh(self.lin(hidden_enc[1,:,:])).unsqueeze(0)
         # faire for i in h[1]
         attention_weights=[]
         outputs = []
@@ -63,9 +67,10 @@ class Decoder(nn.Module):
             
             output_fc = self.fc(maxout_output)
 
-            output=F.softmax(output_fc,dim=1)
+            
+            #output=F.log_softmax(output_fc,dim=1)
 
-            outputs.append(output)
+            outputs.append(output_fc)
 
         return torch.stack(outputs).transpose(0,1), torch.stack(attention_weights).transpose(0,1)
             

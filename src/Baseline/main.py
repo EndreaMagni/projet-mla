@@ -40,8 +40,8 @@ encoder=Encoder(vocab_size,hidden_size,embedding_dim)
 decoder=Decoder(vocab_size,hidden_size,embedding_dim,maxout_units,allign_dim)
 model=RNNsearch(encoder,decoder)
 
-train_data = load_from_disk('C:\\Users\\ferie\\OneDrive\\Bureau\\M2 ISI\\mini_dataset')
+train_data = load_from_disk('C:\\Users\\linda\\OneDrive\\Documents\\M2 SORBONNE\\MACHINE LEARNING Av\\Projet\\mini_dataset')
 
-learning_rate=0.5                               
-epochs=10
-batches=train(model,train_data,word_dict_eng,word_dict_fr,batch_size,learning_rate,epochs,print_every=1)
+learning_rate=1                            
+epochs=2
+batches=train(model,train_data,word_dict_eng,word_dict_fr,batch_size,vocab_size,learning_rate,epochs,print_every=1)
