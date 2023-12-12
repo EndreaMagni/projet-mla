@@ -6,10 +6,11 @@ import numpy as np
 
 
 class RNNsearch(nn.Module):
-    def __init__(self, encoder, decoder):
+    def __init__(self, encoder, decoder, device):
         super(RNNsearch, self).__init__()
         self.encoder = encoder
         self.decoder = decoder
+        self.device = device
         
 
     def forward(self, src):

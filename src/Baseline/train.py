@@ -21,7 +21,10 @@ def one_hot_encode_batch(batch,vocab_size,word_to_id_eng,word_to_id_fr):
         
     return torch.tensor(input_batch, dtype=torch.long), torch.tensor(output_batch, dtype=torch.long)
 
-def train(model,train_data,word_to_id_eng,word_to_id_fr,batch_size,vocab_size,learning_rate,epochs,print_every=1):
+
+
+
+def train(model,train_data,word_to_id_eng,word_to_id_fr,batch_size,vocab_size,learning_rate,epochs,print_every=1,device=device):
     
     batches=make_batch(train_data,batch_size)
     
@@ -29,7 +32,7 @@ def train(model,train_data,word_to_id_eng,word_to_id_fr,batch_size,vocab_size,le
     optimizer = torch.optim.Adadelta(model.parameters(), lr=learning_rate, rho=0.95, eps=1e-06)
 
     criterion = nn.NLLLoss(reduction="mean")
-    batches= batches[:2]
+    batches= batches[:200]
     for epoch in range(epochs):
         
         for batch in batches:

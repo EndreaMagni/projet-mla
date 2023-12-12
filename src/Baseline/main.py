@@ -35,13 +35,16 @@ embedding_dim = 620   # Word embedding dimension
 maxout_units= 500     # Number of units in the maxout layer
 allign_dim=50        # Number of features in the allignment model Tx
 
+if torch.cuda.is_available():           device = torch.device("cuda")
+else:                                   device = torch.device("cpu")
 
 encoder=Encoder(vocab_size,hidden_size,embedding_dim)
 decoder=Decoder(vocab_size,hidden_size,embedding_dim,maxout_units,allign_dim)
-model=RNNsearch(encoder,decoder)
+model=RNNsearch(encoder,decoder,device).to(device)
 
 train_data = load_from_disk('C:\\Users\\linda\\OneDrive\\Documents\\M2 SORBONNE\\MACHINE LEARNING Av\\Projet\\mini_dataset')
 
-learning_rate=1                            
-epochs=2
-batches=train(model,train_data,word_dict_eng,word_dict_fr,batch_size,vocab_size,learning_rate,epochs,print_every=1)
+learning_rate=0.5                            
+epochs=100
+
+batches=train(model,train_data,word_dict_eng,word_dict_fr,batch_size,vocab_size,learning_rate,epochs,print_every=1,device=device)

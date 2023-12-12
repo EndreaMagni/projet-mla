@@ -41,7 +41,7 @@ class Decoder(nn.Module):
         
         self.fc = nn.Linear(maxout_unit, vocab_size)
 
-        self.lin= nn.Linear(hidden_size,hidden_size)
+        self.Ws= nn.Linear(hidden_size,hidden_size)
   
                  
 
@@ -49,7 +49,7 @@ class Decoder(nn.Module):
         batch_size = enc_out.size(0)
         #si= torch.zeros(1,batch_size ,self.hidden_size) #a initiliaser avec hidden_enc
 
-        si =torch.tanh(self.lin(hidden_enc[1,:,:])).unsqueeze(0)
+        si =torch.tanh(self.Ws(hidden_enc[1,:,:])).unsqueeze(0)
         # faire for i in h[1]
         attention_weights=[]
         outputs = []
