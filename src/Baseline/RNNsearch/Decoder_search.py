@@ -25,16 +25,16 @@ class Decoder(nn.Module):
     def __init__(self, vocab_size, hidden_size,embedding_size,maxout_unit,allign_dim):
         super(Decoder, self).__init__()
 
-        input_size_gru= hidden_size*3 + embedding_size
+        input_size_gru= hidden_size*2 + embedding_size
         input_size_attn= hidden_size*3
         input_size_maxout= hidden_size*3 + embedding_size
         self.hidden_size=hidden_size
         self.output_size = vocab_size
-
+        self.vocab_size = vocab_size
         self.Allignement= Allignement( hidden_size,allign_dim)
         
-        self.embedding = nn.Embedding(vocab_size, embedding_size)
-
+        # self.embedding = nn.Embedding(vocab_size, embedding_size)
+        self.embedding = nn.Linear(hidden_size, embedding_size)
         self.gru = nn.GRU(input_size_gru, hidden_size,batch_first=True)
 
         self.maxout = Maxout(input_size_maxout , maxout_unit) # maxout=500
@@ -44,23 +44,22 @@ class Decoder(nn.Module):
 
     def forward(self,enc_out,hidden_enc):# hidden peut etre en in 
         batch_size = enc_out.size(0)
-        si= torch.zeros(1, batch_size ,self.hidden_size) #a initiliaser avec hidden_enc
+        si= torch.zeros(1,batch_size ,self.hidden_size) #a initiliaser avec hidden_enc
 
         # faire for i in h[1]
         attention_weights=[]
         outputs = []
+        yi = torch.zeros(batch_size, self.hidden_size)
         for i in range(enc_out.size(1)) :
             # Calculer le vecteur de contexte avec le model d'alignement 
             context, alpha_ij =self.Allignement(si , enc_out)
             
             attention_weights.append(alpha_ij)
-
+            yi_emb = self.embedding(yi)
             # Passage par la couche GRU
-            yi, si = self.gru(context.unsqueeze(1), si) 
-
-            yi_emb = self.embedding(yi.squeeze(1))
-     
-            maxout_output = self.maxout(torch.cat((si, context, yi_emb), dim = 1))
+            yi, si = self.gru(torch.cat([yi_emb, context], dim=1).unsqueeze(1), si)
+            yi = yi.squeeze(1)
+            maxout_output = self.maxout(torch.cat((si.view(si.shape[1],-1), context, yi_emb), dim = 1))
             
             output_fc = self.fc(maxout_output)
 
@@ -68,7 +67,7 @@ class Decoder(nn.Module):
 
             outputs.append(output)
 
-        return torch.stack(outputs), attention_weights 
+        return torch.stack(outputs).transpose(0,1), torch.stack(attention_weights).transpose(0,1)
             
         
     

@@ -13,7 +13,7 @@ class RNNsearch(nn.Module):
         
 
     def forward(self, src):
-        src = src.squeeze(1)
+        
         batch_size = np.shape(src)[0]
         trg_len = np.shape(src)[1]
         trg_vocab_size = self.decoder.output_size
