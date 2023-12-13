@@ -71,11 +71,7 @@ class BaselineTrainer:
 
         return input_batch,output_batch
     
-    def Init_weights(self, m):
-        for name, param in m.named_parameters():
-            if 'weight_hh' in name  : init.orthogonal_(param.data) 
-            elif 'weight' in name   : nn.init.normal_(param.data, mean=0, std=0.01)  
-            else                    : nn.init.constant_(param.data, 0)
+
 
     def different_approach(self, train_data, valid_data, test_data):
         self.train_iterator, self.valid_iterator, self.test_iterator = BucketIterator.splits(

@@ -3,6 +3,8 @@ import random
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.nn.init as init
+
 def make_batch(data,batch_size):   
     # creating pairs
     pairs = [[item['translation']['en'], item['translation']['fr']] for item in data]
@@ -21,10 +23,16 @@ def one_hot_encode_batch(batch,vocab_size,word_to_id_eng,word_to_id_fr):
         
     return torch.tensor(input_batch, dtype=torch.long), torch.tensor(output_batch, dtype=torch.long)
 
+def Init_weights(model):
+    for name, param in model.named_parameters():
+        if 'weight_hh' in name  : init.orthogonal_(param.data) 
+        elif 'weight' in name   : nn.init.normal_(param.data, mean=0, std=0.01)  
+        else                    : nn.init.constant_(param.data, 0)
 
 
-
-def train(model,train_data,word_to_id_eng,word_to_id_fr,batch_size,vocab_size,learning_rate,epochs,print_every=1,device=device):
+def train(model,train_data,word_to_id_eng,word_to_id_fr,batch_size,vocab_size,learning_rate,epochs,device,print_every=1,):
+    
+    model.apply(Init_weights)
     
     batches=make_batch(train_data,batch_size)
     
@@ -32,7 +40,6 @@ def train(model,train_data,word_to_id_eng,word_to_id_fr,batch_size,vocab_size,le
     optimizer = torch.optim.Adadelta(model.parameters(), lr=learning_rate, rho=0.95, eps=1e-06)
 
     criterion = nn.NLLLoss(reduction="mean")
-    batches= batches[:200]
     for epoch in range(epochs):
         
         for batch in batches:
