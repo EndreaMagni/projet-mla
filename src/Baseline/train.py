@@ -34,9 +34,9 @@ def Init_weights(model):
 def train(model, train_data, val_data, word_to_id_eng, word_to_id_fr, batch_size, vocab_size, learning_rate, epochs, device,print_every):
     model = model.to(device)
     model.apply(Init_weights)
+
     optimizer = torch.optim.Adadelta(model.parameters(), lr=learning_rate, rho=0.95, eps=1e-06)
     criterion = nn.NLLLoss(reduction="mean")
-
     train_losses = []
     val_losses = []
     best_val_loss = float('inf')
