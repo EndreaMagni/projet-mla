@@ -42,9 +42,11 @@ encoder=Encoder(vocab_size,hidden_size,embedding_dim)
 decoder=Decoder(vocab_size,hidden_size,embedding_dim,maxout_units,allign_dim)
 model=RNNsearch(encoder,decoder,device).to(device)
 
-train_data = load_from_disk('C:\\Users\\linda\\OneDrive\\Documents\\M2 SORBONNE\\MACHINE LEARNING Av\\Projet\\mini_dataset')
-
+train_data = load_from_disk('C:\\Users\\ferie\\OneDrive\\Bureau\\M2 ISI\\mini_dataset')
+train_data, val_data = train_data.train_test_split(test_size=0.2).values()
+breakpoint()
 learning_rate=1                            
 epochs=2
 
-batches=train(model,train_data,word_dict_eng,word_dict_fr,batch_size,vocab_size,learning_rate,epochs,print_every=1,device=device)
+batches=train(model,train_data,val_data,word_dict_eng,word_dict_fr,batch_size,vocab_size,learning_rate,epochs,device=device,print_every=1)
+#test=train(model, train_data, val_data, word_to_id_eng, word_to_id_fr, batch_size, vocab_size, learning_rate, epochs, device,print_every):cle
