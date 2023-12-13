@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.nn.init as init
-
+import tqdm
 def make_batch(data,batch_size):   
     # creating pairs
     pairs = [[item['translation']['en'], item['translation']['fr']] for item in data]
@@ -49,7 +49,7 @@ def train(model, train_data, val_data, word_to_id_eng, word_to_id_fr, batch_size
         attention_weights=[]
         model.train()
         total_loss = 0
-        for batch in train_batches:
+        for batch in tqdm(train_batches, desc=f'Epoch {epoch + 1}/{epochs}'):
             input_batch, output_batch = index_batch(batch, len(word_to_id_eng), word_to_id_eng, word_to_id_fr)
             input_batch, output_batch = input_batch.to(device), output_batch.to(device)
 

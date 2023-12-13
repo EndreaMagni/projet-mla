@@ -6,7 +6,7 @@ from RNNsearch.RNNsearch import *
 from RNNsearch.Encoder_search import *
 from RNNsearch.Decoder_search import *
 from RNNsearch.Allignement import *
-from datasets import  load_from_disk
+from datasets import load_from_disk
 import torch
 import torch.nn as nn
 from train import *
@@ -44,7 +44,7 @@ model=RNNsearch(encoder,decoder,device).to(device)
 
 train_data = load_from_disk('C:\\Users\\linda\\OneDrive\\Documents\\M2 SORBONNE\\MACHINE LEARNING Av\\Projet\\mini_dataset')
 
-learning_rate=0.5                            
-epochs=100
+learning_rate=1                            
+epochs=2
 
 batches=train(model,train_data,word_dict_eng,word_dict_fr,batch_size,vocab_size,learning_rate,epochs,print_every=1,device=device)
