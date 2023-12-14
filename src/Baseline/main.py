@@ -38,8 +38,8 @@ allign_dim=50        # Number of features in the allignment model Tx
 if torch.cuda.is_available():           device = torch.device("cuda")
 else:                                   device = torch.device("cpu")
 
-encoder=Encoder(vocab_size,hidden_size,embedding_dim)
-decoder=Decoder(vocab_size,hidden_size,embedding_dim,maxout_units,allign_dim)
+encoder=Encoder(vocab_size,hidden_size,embedding_dim device=device=device))
+decoder=Decoder(vocab_size,hidden_size,embedding_dim,maxout_units,allign_dim,device=device))
 model=RNNsearch(encoder,decoder,device).to(device)
 
 train_data = load_from_disk('/home/linda/dataset_50/train')

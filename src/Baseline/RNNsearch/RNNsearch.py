@@ -18,7 +18,7 @@ class RNNsearch(nn.Module):
         batch_size = np.shape(src)[0]
         trg_len = np.shape(src)[1]
         trg_vocab_size = self.decoder.output_size
-        outputs = torch.zeros(batch_size,trg_len, trg_vocab_size)
+        outputs = torch.zeros(batch_size,trg_len, trg_vocab_size).to(self.device)
 
         # Debugging: Try-catch block for encoder
         
