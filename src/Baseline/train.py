@@ -78,7 +78,6 @@ def train(model, train_data, val_data, word_to_id_eng, word_to_id_fr, batch_size
                 output = output.reshape(-1, vocab_size)
                 output = F.log_softmax(output, dim=1)
                 output_batch = output_batch.view(-1).long()
-
                 val_loss = criterion(output, output_batch)
                 total_val_loss += val_loss.item()
 
