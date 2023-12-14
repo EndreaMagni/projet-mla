@@ -38,12 +38,15 @@ allign_dim=50        # Number of features in the allignment model Tx
 if torch.cuda.is_available():           device = "cuda"
 else:                                   device = "cpu"
 
-encoder=Encoder(vocab_size,hidden_size,embedding_dim ,device=device)
-decoder=Decoder(vocab_size,hidden_size,embedding_dim,maxout_units,device=device)
+
+encoder=Encoder(vocab_size,hidden_size,embedding_dim ,device=device).to(device)
+decoder=Decoder(vocab_size,hidden_size,embedding_dim,maxout_units,device=device).to(device)
 model=RNNsearch(encoder,decoder,device).to(device)
 
 train_data = load_from_disk('/home/linda/dataset_50/train')
 test_val_data=load_from_disk('/home/linda/dataset_50/test')
+#train_data = load_from_disk('..\\dataset_50\\train')
+#test_val_data=load_from_disk('..\dataset_50\\test')
 test_data, val_data = test_val_data.train_test_split(test_size=0.5).values()
 
 learning_rate=1                            

@@ -12,6 +12,7 @@ class MaxoutLayer(nn.Module):
         
         self.num_pieces     = num_pieces
 
+    
     def forward(self, input_tensor):
 
         output              = self.fc(input_tensor)
@@ -46,22 +47,26 @@ class Decoder(nn.Module):
     def forward(self, input_token, hidden_state, context_vector):
 
         input_token         = input_token.unsqueeze(0)
-
+        
         embedded            = self.embedding(input_token)
-
-        gru_input           = torch.cat(embedded, 
-                                        context_vector, dim = 2)
+              
+        gru_input           = torch.cat((embedded, 
+                                        context_vector), dim = 2)
 
         _, hidden_state     = self.gru(gru_input, 
                                        hidden_state)
+
         
         output              = torch.cat((embedded.squeeze(0), 
                                          hidden_state.squeeze(0), 
                                          context_vector.squeeze(0)), 
                                          dim=1)
-        
+
         output              = self.fc1(output)
-        
+
         prediction          = self.fc2(output)
 
+        prediction          = F.softmax(prediction, dim=-1)
+
+    
         return prediction, hidden_state

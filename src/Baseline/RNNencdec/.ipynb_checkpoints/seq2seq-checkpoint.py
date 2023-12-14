@@ -34,7 +34,7 @@ class Seq2Seq(nn.Module):
             output, hidden_state    = self.decoder(input_target_token, 
                                                    hidden_state, 
                                                    context_vector)
-            
+
             outputs[t]              = output
             
             input_target_token     = output.argmax(1) 
