@@ -55,7 +55,6 @@ train_dataset = Seq2seqData(train_data, word_to_id_eng, word_to_id_fr)
 val_dataset = Seq2seqData(val_data, word_to_id_eng, word_to_id_fr)
 
 # Move the data loaders to the same device as the model
-batch_size = 64
 train_data_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, pin_memory=device=="cuda")
 val_data_loader = DataLoader(val_dataset, batch_size=batch_size, pin_memory=device=="cuda")
 

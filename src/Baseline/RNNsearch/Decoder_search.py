@@ -46,7 +46,8 @@ class Decoder(nn.Module):
         attention_weights = []
         outputs = torch.zeros(hidden_enc.size(0), hidden_enc.size(1), self.maxout.output_size).to(hidden_enc.device)
         yi = torch.zeros(batch_size, self.hidden_size).to(enc_out.device)
-
+        outputs=[]
+        
         for i in range(enc_out.size(1)):
             context, alpha_ij = self.Allignement(si, enc_out)
             attention_weights.append(alpha_ij)
@@ -57,9 +58,9 @@ class Decoder(nn.Module):
 
             maxout_output = self.maxout(torch.cat((si.view(si.shape[1], -1), context, yi_emb), dim=1))
             output_fc = self.fc(maxout_output)
-            outputs[:, i, :] = output_fc
+            #outputs[:, i, :] = output_fc
+            outputs.append(output_fc)
 
 
-            
 
         return torch.stack(outputs).transpose(0, 1), torch.stack(attention_weights).transpose(0, 1)

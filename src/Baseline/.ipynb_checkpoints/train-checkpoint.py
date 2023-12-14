@@ -21,7 +21,8 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
     model.apply(Init_weights)
 
     optimizer = torch.optim.Adadelta(model.parameters(), lr=learning_rate, rho=0.95, eps=1e-06)
-    criterion = nn.NLLLoss(reduction="mean")
+    #criterion = nn.NLLLoss(reduction="mean")
+    criterion = nn.CrossEntropyLoss(reduction="mean")
     train_losses = []
     val_losses = []
     best_val_loss = float('inf')
@@ -33,24 +34,25 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
         attention_weights=[]
         model = model.to(device)
         total_loss = 0
-        for input_batch, output_batch , output_batch_onthot in tqdm(train_data_loader, desc=f'Training Epoch {epoch + 1}/{epochs}'):
-            input_batch, output_batch,output_batch_onthot = input_batch.to(device), output_batch.to(device),output_batch_onthot.to(device)
+        for input_batch, output_batch , output_batch_onehot in tqdm(train_data_loader, desc=f'Training Epoch {epoch + 1}/{epochs}'):
+            input_batch, output_batch,output_batch_onehot = input_batch.to(device), output_batch.to(device),output_batch_onehot.to(device)
 
             optimizer.zero_grad()
             output, attention_weights = model(input_batch)
             output = output.reshape(-1, vocab_size)
-            output = F.log_softmax(output, dim=1)
-
-            output_batch_onthot = output_batch_onthot.view(-1).long()
-
-            loss = criterion(output, output_batch_onthot)
+            #output = F.log_softmax(output, dim=1)
+            
+            output_batch_onehot = output_batch_onehot.view(-1, vocab_size)
+            
+            loss = criterion(output, output_batch_onehot)
             loss.backward()
             optimizer.step()
             total_loss += loss.item()
-            print(f'Epoch: {epoch + 1}, Training Loss: {loss:.6f}')
+            
 
         avg_train_loss = total_loss / len(train_data_loader)
         train_losses.append(avg_train_loss)
+        print(f'Epoch: {epoch + 1}, Training Loss: {loss:.6f}')
         
         """"
         # Validation

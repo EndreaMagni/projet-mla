@@ -16,6 +16,6 @@ class Seq2seqData(Dataset):
         pair = self.data[idx]
         input_sequence = [self.word_to_id_eng.get(word, 0) for word in pair['translation']['en']]
         output_sequence = [self.word_to_id_fr.get(word, 0) for word in pair['translation']['fr']]
-        output_onehot = F.one_hot(torch.tensor(output_sequence), num_classes=len(self.word_to_id_fr)).float()
+        output_onehot = F.one_hot(torch.tensor(output_sequence), num_classes=30000).float()
         return torch.tensor(input_sequence, dtype=torch.long), torch.tensor(output_sequence, dtype=torch.long),output_onehot
 
