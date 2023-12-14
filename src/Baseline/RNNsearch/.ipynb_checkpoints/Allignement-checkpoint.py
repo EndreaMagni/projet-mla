@@ -13,7 +13,7 @@ class Allignement(nn.Module):
         self.Wa = nn.Linear(hidden_size, hidden_size, device=device)
         self.Ua = nn.Linear(hidden_size*2, hidden_size, device=device)
         self.va = nn.Linear(hidden_size, 1,device=device)
-        #self.va = nn.Parameter(torch.rand(attn_dim, 1))
+       
 
     # Forward pass du module d'Allignement
     def forward(self, si,enc_out):

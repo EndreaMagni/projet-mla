@@ -4,7 +4,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 
 class Encoder(nn.Module):
-    def __init__(self, input_size : int , hidden_size: int , embedding_size : int , device : torch.device)-->None:
+    def __init__(self, input_size : int , hidden_size: int , embedding_size : int , device : torch.device)->None:
         super(Encoder,self).__init__()
 
         
@@ -13,7 +13,7 @@ class Encoder(nn.Module):
         self.bi_RNN=nn.GRU(input_size=embedding_size,
                             hidden_size=hidden_size,
                             bidirectional=True,
-                            batch_first=True
+                            batch_first=True,
                             device=device)
         
         
