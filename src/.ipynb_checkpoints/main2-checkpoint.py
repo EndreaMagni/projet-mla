@@ -66,7 +66,7 @@ if __name__ == "__main__":
     if args.train:
         from Baseline.translation import BaselineTrainer
 
-        train_data = load_from_disk('projet-mla/mini_dataset')
+        data = load_from_disk('projet-mla/mini_dataset')
 
 
         eng_vocab_path                          = 'projet-mla/30k_eng.txt'
