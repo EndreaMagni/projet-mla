@@ -32,6 +32,7 @@ def Init_weights(model):
 
           
 def train(model, train_data, val_data, word_to_id_eng, word_to_id_fr, batch_size, vocab_size, learning_rate, epochs, device,print_every):
+    print('Training Started')
     model = model.to(device)
     model.apply(Init_weights)
 
