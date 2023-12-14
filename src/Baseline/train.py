@@ -5,23 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.nn.init as init
 from tqdm import tqdm
-def make_batch(data,batch_size):   
-    # creating pairs
-    pairs = [[item['translation']['en'], item['translation']['fr']] for item in data]
-    batches = [pairs[i:i + batch_size] for i in range(0, len(pairs), batch_size)]
-    return np.array(batches)
 
-def index_batch(batch,word_to_id_eng,word_to_id_fr):
-    input_batch = []
-    output_batch = []
-    for pair in batch: 
-        
-        #input_batch.append([np.eye(vocab_size)[[word_to_id_eng.get(n,0) for n in pair[0]]]])
-        #output_batch.append([np.eye(vocab_size)[[word_to_id_fr.get(n,0) for n in pair[1]]]])
-        input_batch.append([word_to_id_eng.get(n,0) for n in pair[0]])
-        output_batch.append([word_to_id_fr.get(n,0) for n in pair[1]])
-        
-    return torch.tensor(input_batch, dtype=torch.long), torch.tensor(output_batch, dtype=torch.long)
 
 def Init_weights(model):
     for name, param in model.named_parameters():
