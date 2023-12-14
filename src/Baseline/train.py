@@ -27,9 +27,10 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
     val_losses = []
     best_val_loss = float('inf')
     best_model = None
-     
+    best_attention_weights=[]
 
-    
+
+
     for epoch in range(epochs):
         attention_weights=[]
         model = model.to(device)
@@ -52,23 +53,22 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
 
         avg_train_loss = total_loss / len(train_data_loader)
         train_losses.append(avg_train_loss)
-        print(f'Epoch: {epoch + 1}, Training Loss: {loss:.6f}')
         
-        """"
+
         # Validation
         model.eval()
         total_val_loss = 0
         with torch.no_grad():
-            for batch in tqdm(val_batches, desc=f'Validation Epoch {epoch + 1}/{epochs}'):
+            for input_batch, output_batch , output_batch_onehot in tqdm(val_data_loader, desc=f'Validation Epoch {epoch + 1}/{epochs}'):
 
-                output, _ = model(input_batch)
+                output, attention_weights = model(input_batch)
                 output = output.reshape(-1, vocab_size)
-                output = F.log_softmax(output, dim=1)
-                output_batch = output_batch.view(-1).long()
-                val_loss = criterion(output, output_batch)
+                #output = F.log_softmax(output, dim=1)
+                output_batch_onehot = output_batch_onehot.view(-1, vocab_size)
+                val_loss = criterion(output, output_batch_onehot)
                 total_val_loss += val_loss.item()
 
-        avg_val_loss = total_val_loss / len(val_data)
+        avg_val_loss = total_val_loss / len(val_data_loader)
         val_losses.append(avg_val_loss)
 
         if avg_val_loss < best_val_loss:
@@ -79,12 +79,15 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
         if epoch % print_every == 0:
             print(f'Epoch: {epoch + 1}, Training Loss: {avg_train_loss:.6f}, Validation Loss: {avg_val_loss:.6f}')
 
-    print('Training Finished')
+    
     np.save('train_losses.npy', np.array(train_losses))
     np.save('val_losses.npy', np.array(val_losses))
     torch.save(best_model, 'best_model.pth')
-    """
-    #return best_attention_weights
+    print('Training Finished')
+    return best_attention_weights
+
+        
+        
 
           
 
