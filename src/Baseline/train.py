@@ -31,7 +31,7 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
     
     for epoch in range(epochs):
         attention_weights=[]
-        model.train()
+        model = model.to(device)
         total_loss = 0
         for input_batch, output_batch , output_batch_onthot in tqdm(train_data_loader, desc=f'Training Epoch {epoch + 1}/{epochs}'):
             input_batch, output_batch,output_batch_onthot = input_batch.to(device), output_batch.to(device),output_batch_onthot.to(device)

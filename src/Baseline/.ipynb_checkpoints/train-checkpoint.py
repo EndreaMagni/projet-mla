@@ -15,7 +15,7 @@ def Init_weights(model):
 
 
           
-def train(model, train_data, val_data, word_to_id_eng, word_to_id_fr, batch_size, vocab_size, learning_rate, epochs, device,print_every):
+def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate, epochs, device,print_every):
     print('Training Started')
     model = model.to(device)
     model.apply(Init_weights)
@@ -27,38 +27,38 @@ def train(model, train_data, val_data, word_to_id_eng, word_to_id_fr, batch_size
     best_val_loss = float('inf')
     best_model = None
      
-    train_batches=make_batch(train_data, batch_size)
-    val_batches=make_batch(val_data, batch_size)
+
     
     for epoch in range(epochs):
         attention_weights=[]
-        model.train()
+        model = model.to(device)
         total_loss = 0
-        for batch in tqdm(train_batches, desc=f'Training Epoch {epoch + 1}/{epochs}'):
-            input_batch, output_batch = index_batch(batch, word_to_id_eng, word_to_id_fr)
-            input_batch, output_batch = input_batch.to(device), output_batch.to(device)
+        for input_batch, output_batch , output_batch_onthot in tqdm(train_data_loader, desc=f'Training Epoch {epoch + 1}/{epochs}'):
+            input_batch, output_batch,output_batch_onthot = input_batch.to(device), output_batch.to(device),output_batch_onthot.to(device)
 
             optimizer.zero_grad()
             output, attention_weights = model(input_batch)
             output = output.reshape(-1, vocab_size)
             output = F.log_softmax(output, dim=1)
-            output_batch = output_batch.view(-1).long()
 
-            loss = criterion(output, output_batch)
+            output_batch_onthot = output_batch_onthot.view(-1).long()
+
+            loss = criterion(output, output_batch_onthot)
             loss.backward()
             optimizer.step()
             total_loss += loss.item()
+            print(f'Epoch: {epoch + 1}, Training Loss: {loss:.6f}')
 
-        avg_train_loss = total_loss / len(train_data)
+        avg_train_loss = total_loss / len(train_data_loader)
         train_losses.append(avg_train_loss)
-
+        
+        """"
         # Validation
         model.eval()
         total_val_loss = 0
         with torch.no_grad():
             for batch in tqdm(val_batches, desc=f'Validation Epoch {epoch + 1}/{epochs}'):
-                input_batch, output_batch =index_batch(batch, len(word_to_id_eng), word_to_id_eng, word_to_id_fr)
-                input_batch, output_batch = input_batch.to(device), output_batch.to(device)
+
                 output, _ = model(input_batch)
                 output = output.reshape(-1, vocab_size)
                 output = F.log_softmax(output, dim=1)
@@ -81,7 +81,8 @@ def train(model, train_data, val_data, word_to_id_eng, word_to_id_fr, batch_size
     np.save('train_losses.npy', np.array(train_losses))
     np.save('val_losses.npy', np.array(val_losses))
     torch.save(best_model, 'best_model.pth')
-    return best_attention_weights
+    """
+    #return best_attention_weights
 
           
 
