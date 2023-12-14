@@ -10,6 +10,7 @@ from datasets import load_from_disk
 import torch
 import torch.nn as nn
 from train import *
+from dataloader import *
 
 
 fr_vocab_path = '../../30k_fr.txt'  # Path to the French vocab file
@@ -17,14 +18,14 @@ with open(fr_vocab_path, 'r') as file:
     fr_words = [line.strip() for line in file]
 
 # Cleaning words and creating the dictionary
-word_dict_fr = {word: i for i, word in enumerate(fr_words)}
+word_to_id_fr = {word: i for i, word in enumerate(fr_words)}
 
 eng_vocab_path= '../../30k_eng.txt'  # Path to the English vocab file
 # Open the file and read lines into a list
 with open(eng_vocab_path, 'r') as file:
     eng_words = [line.strip() for line in file]
 
-word_dict_eng = { word.strip() : i for i, word in enumerate(eng_words)}
+word_to_id_eng = { word.strip() : i for i, word in enumerate(eng_words)}
 
 
 #hyperparameters
@@ -45,11 +46,18 @@ model=RNNsearch(encoder,decoder,device).to(device)
 
 train_data = load_from_disk('/home/linda/dataset_50/train')
 test_val_data=load_from_disk('/home/linda/dataset_50/test')
-#train_data = load_from_disk('..\\dataset_50\\train')
-#test_val_data=load_from_disk('..\dataset_50\\test')
+
 test_data, val_data = test_val_data.train_test_split(test_size=0.5).values()
 
+# Create a TranslationDataset instance for training and validation
+train_dataset = Seq2seqData(train_data, word_to_id_eng, word_to_id_fr)
+val_dataset = Seq2seqData(val_data, word_to_id_eng, word_to_id_fr)
+
+# Create data loaders for training and validation
+batch_size = 64
+train_data_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+val_data_loader = DataLoader(val_dataset, batch_size=batch_size)
 learning_rate=1                            
 epochs=2
 
-batches=train(model,train_data,val_data,word_dict_eng,word_dict_fr,batch_size,vocab_size,learning_rate,epochs,print_every=1,device=device)
+batches=train(model,train_data_loader,val_data_loader,batch_size,vocab_size,learning_rate,epochs,print_every=1,device=device)
