@@ -13,14 +13,14 @@ from train import *
 from dataloader import *
 
 
-fr_vocab_path = '../../30k_fr.txt'  # Path to the French vocab file
+fr_vocab_path = '../../new30k_fr.txt'  # Path to the French vocab file
 with open(fr_vocab_path, 'r') as file:
     fr_words = [line.strip() for line in file]
 
 # Cleaning words and creating the dictionary
 word_to_id_fr = {word: i for i, word in enumerate(fr_words)}
 
-eng_vocab_path= '../../30k_eng.txt'  # Path to the English vocab file
+eng_vocab_path= '../../new30k_eng.txt'  # Path to the English vocab file
 # Open the file and read lines into a list
 with open(eng_vocab_path, 'r') as file:
     eng_words = [line.strip() for line in file]
