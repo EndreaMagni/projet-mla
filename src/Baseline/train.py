@@ -74,8 +74,8 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
             best_model = model.state_dict()
             best_attention_weights=attention_weights
 
-        if epoch % print_every == 0:
-            print(f'Epoch: {epoch + 1}, Training Loss: {avg_train_loss:.6f}, Validation Loss: {avg_val_loss:.6f}')
+        
+        print(f'Epoch: {epoch + 1}, Training Loss: {avg_train_loss:.6f}, Validation Loss: {avg_val_loss:.6f}')
 
     
     np.save('train_losses.npy', np.array(train_losses))
