@@ -8,13 +8,13 @@ class Encoder(nn.Module):
         super(Encoder,self).__init__()
 
         
-        self.embedding = nn.Embedding(input_size, embedding_size,device=device)
+        self.embedding = nn.Embedding(input_size, embedding_size)
 
         self.bi_RNN=nn.GRU(input_size=embedding_size,
                             hidden_size=hidden_size,
                             bidirectional=True,
                             batch_first=True,
-                            device=device)
+                            )
         
         
     def forward(self, input):

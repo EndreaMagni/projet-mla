@@ -19,7 +19,6 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
     print('Training Started')
     model = model.to(device)
     model.apply(Init_weights)
-
     optimizer = torch.optim.Adadelta(model.parameters(), lr=learning_rate, rho=0.95, eps=1e-06)
     #criterion = nn.NLLLoss(reduction="mean")
     criterion = nn.CrossEntropyLoss(reduction="mean")
@@ -27,16 +26,15 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
     val_losses = []
     best_val_loss = float('inf')
     best_model = None
-     
+    best_attention_weights=[]
 
-    
     for epoch in range(epochs):
         attention_weights=[]
-        model = model.to(device)
         total_loss = 0
-        for input_batch, output_batch , output_batch_onehot in tqdm(train_data_loader, desc=f'Training Epoch {epoch + 1}/{epochs}'):
-            input_batch, output_batch,output_batch_onehot = input_batch.to(device), output_batch.to(device),output_batch_onehot.to(device)
+        for input_batch, output_batch  in tqdm(train_data_loader, desc=f'Training Epoch {epoch + 1}/{epochs}'):
+            input_batch, output_batch = input_batch.to(device), output_batch.to(device)
 
+            output_batch_onehot = F.one_hot(torch.tensor(output_batch), num_classes=vocab_size).float().to(device)
             optimizer.zero_grad()
             output, attention_weights = model(input_batch)
             output = output.reshape(-1, vocab_size)
@@ -47,28 +45,25 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
             loss = criterion(output, output_batch_onehot)
             loss.backward()
             optimizer.step()
-            total_loss += loss.item()
-            
-
+            total_loss += loss.item()         
         avg_train_loss = total_loss / len(train_data_loader)
         train_losses.append(avg_train_loss)
-        print(f'Epoch: {epoch + 1}, Training Loss: {loss:.6f}')
         
-        """"
         # Validation
         model.eval()
         total_val_loss = 0
         with torch.no_grad():
-            for batch in tqdm(val_batches, desc=f'Validation Epoch {epoch + 1}/{epochs}'):
-
-                output, _ = model(input_batch)
+            for input_batch, output_batch in tqdm(val_data_loader, desc=f'Validation Epoch {epoch + 1}/{epochs}'):
+                input_batch, output_batch= input_batch.to(device), output_batch.to(device)
+                output_batch_onehot= F.one_hot(torch.tensor(output_batch), num_classes=vocab_size).float().to(device)
+                output, attention_weights = model(input_batch)
                 output = output.reshape(-1, vocab_size)
-                output = F.log_softmax(output, dim=1)
-                output_batch = output_batch.view(-1).long()
-                val_loss = criterion(output, output_batch)
+                #output = F.log_softmax(output, dim=1)
+                output_batch_onehot = output_batch_onehot.view(-1, vocab_size)
+                val_loss = criterion(output, output_batch_onehot)
                 total_val_loss += val_loss.item()
 
-        avg_val_loss = total_val_loss / len(val_data)
+        avg_val_loss = total_val_loss / len(val_data_loader)
         val_losses.append(avg_val_loss)
 
         if avg_val_loss < best_val_loss:
@@ -79,12 +74,15 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
         if epoch % print_every == 0:
             print(f'Epoch: {epoch + 1}, Training Loss: {avg_train_loss:.6f}, Validation Loss: {avg_val_loss:.6f}')
 
-    print('Training Finished')
+    
     np.save('train_losses.npy', np.array(train_losses))
     np.save('val_losses.npy', np.array(val_losses))
     torch.save(best_model, 'best_model.pth')
-    """
-    #return best_attention_weights
+    print('Training Finished')
+    return best_attention_weights
+
+        
+        
 
           
 

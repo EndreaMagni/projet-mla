@@ -10,9 +10,9 @@ class Allignement(nn.Module):
         super(Allignement, self).__init__()
 
         # Définition des couches linéaires pour le calcul de l'Allignement
-        self.Wa = nn.Linear(hidden_size, hidden_size, device=device)
-        self.Ua = nn.Linear(hidden_size*2, hidden_size, device=device)
-        self.va = nn.Linear(hidden_size, 1,device=device)
+        self.Wa = nn.Linear(hidden_size, hidden_size)
+        self.Ua = nn.Linear(hidden_size*2, hidden_size)
+        self.va = nn.Linear(hidden_size, 1)
        
 
     # Forward pass du module d'Allignement

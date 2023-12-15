@@ -21,7 +21,7 @@ class Maxout(nn.Module):
 class Decoder(nn.Module):
     def __init__(self, vocab_size: int, hidden_size: int, embedding_size: int, maxout_unit: int, device: torch.device):
         super(Decoder, self).__init__()
-
+        self.device = device
         input_size_gru = hidden_size * 2 + embedding_size
         input_size_maxout = hidden_size * 3 + embedding_size
         self.hidden_size = hidden_size
@@ -30,22 +30,22 @@ class Decoder(nn.Module):
 
         self.Allignement = Allignement(hidden_size, device)
 
-        self.embedding = nn.Linear(hidden_size, embedding_size).to(device)
-        self.gru = nn.GRU(input_size_gru, hidden_size, batch_first=True).to(device)
+        self.embedding = nn.Linear(hidden_size, embedding_size)
+        self.gru = nn.GRU(input_size_gru, hidden_size, batch_first=True)
 
-        self.maxout = Maxout(input_size_maxout, maxout_unit, 2).to(device)  # maxout=500
+        self.maxout = Maxout(input_size_maxout, maxout_unit, 2)  # maxout=500
 
-        self.fc = nn.Linear(maxout_unit, vocab_size).to(device)
+        self.fc = nn.Linear(maxout_unit, vocab_size)
 
-        self.Ws = nn.Linear(hidden_size, hidden_size).to(device)
+        self.Ws = nn.Linear(hidden_size, hidden_size)
 
     def forward(self, enc_out, hidden_enc):
         batch_size = enc_out.size(0)
-        si = torch.tanh(self.Ws(hidden_enc[1, :, :])).unsqueeze(0).to(hidden_enc.device)
+        si = torch.tanh(self.Ws(hidden_enc[1, :, :])).unsqueeze(0)
 
         attention_weights = []
-        outputs = torch.zeros(hidden_enc.size(0), hidden_enc.size(1), self.maxout.output_size).to(hidden_enc.device)
-        yi = torch.zeros(batch_size, self.hidden_size).to(enc_out.device)
+        outputs = torch.zeros(hidden_enc.size(0), hidden_enc.size(1), self.maxout.output_size).to(self.device)
+        yi = torch.zeros(batch_size, self.hidden_size).to(self.device)
         outputs=[]
         
         for i in range(enc_out.size(1)):
@@ -60,7 +60,6 @@ class Decoder(nn.Module):
             output_fc = self.fc(maxout_output)
             #outputs[:, i, :] = output_fc
             outputs.append(output_fc)
-
 
 
         return torch.stack(outputs).transpose(0, 1), torch.stack(attention_weights).transpose(0, 1)

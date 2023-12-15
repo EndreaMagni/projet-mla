@@ -41,8 +41,8 @@ if torch.cuda.is_available():
 else:
     device = "cpu"
 
-encoder = Encoder(vocab_size, hidden_size, embedding_dim, device=device).to(device)
-decoder = Decoder(vocab_size, hidden_size, embedding_dim, maxout_units, device=device).to(device)
+encoder = Encoder(vocab_size, hidden_size, embedding_dim, device=device)
+decoder = Decoder(vocab_size, hidden_size, embedding_dim, maxout_units, device=device)
 model = RNNsearch(encoder, decoder, device=device).to(device)
 
 train_data = load_from_disk('/home/linda/dataset_50/train')
@@ -59,7 +59,7 @@ train_data_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=Tru
 val_data_loader = DataLoader(val_dataset, batch_size=batch_size, pin_memory=device=="cuda")
 
 learning_rate = 1
-epochs = 2
+epochs = 100
 
 train(model, train_data_loader, val_data_loader, vocab_size, learning_rate, epochs, device, print_every=1)
 
