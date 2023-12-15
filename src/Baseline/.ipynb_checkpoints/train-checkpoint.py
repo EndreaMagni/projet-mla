@@ -48,7 +48,8 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
             loss = criterion(output, output_batch_onehot)
             loss.backward()
             optimizer.step()
-            total_loss += loss.item() 
+            total_loss += loss.item()
+            print(f' Training Loss: {loss.item():.6f}')
             
             
              
