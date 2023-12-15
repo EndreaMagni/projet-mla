@@ -48,6 +48,9 @@ model = RNNsearch(encoder, decoder, device=device).to(device)
 train_data = load_from_disk('/home/linda/dataset_50/train')
 test_val_data = load_from_disk('/home/linda/dataset_50/test')
 
+#test_val_data = load_from_disk('/home/linda/projet-mla/mini_dataset')
+#train_data = load_from_disk('/home/linda/projet-mla/mini_dataset')
+
 test_data, val_data = test_val_data.train_test_split(test_size=0.5).values()
 
 # Create a TranslationDataset instance for training and validation

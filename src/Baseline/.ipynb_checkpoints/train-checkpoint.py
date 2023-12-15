@@ -29,7 +29,10 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
     best_attention_weights=[]
 
     for epoch in range(epochs):
+        
         attention_weights=[]
+        #training
+        model.train()
         total_loss = 0
         for input_batch, output_batch  in tqdm(train_data_loader, desc=f'Training Epoch {epoch + 1}/{epochs}'):
             input_batch, output_batch = input_batch.to(device), output_batch.to(device)
@@ -45,7 +48,9 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
             loss = criterion(output, output_batch_onehot)
             loss.backward()
             optimizer.step()
-            total_loss += loss.item()   
+            total_loss += loss.item() 
+            
+            
              
             
         avg_train_loss = total_loss / len(train_data_loader)
@@ -64,6 +69,7 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
                 output_batch_onehot = output_batch_onehot.view(-1, vocab_size)
                 val_loss = criterion(output, output_batch_onehot)
                 total_val_loss += val_loss.item()
+                
                 
 
         avg_val_loss = total_val_loss / len(val_data_loader)
