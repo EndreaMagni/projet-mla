@@ -58,7 +58,7 @@ val_dataset = Seq2seqData(val_data, word_to_id_eng, word_to_id_fr)
 train_data_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, pin_memory=device=="cuda")
 val_data_loader = DataLoader(val_dataset, batch_size=batch_size, pin_memory=device=="cuda")
 
-learning_rate = 1
+learning_rate = 0.1
 epochs = 100
 
 train(model, train_data_loader, val_data_loader, vocab_size, learning_rate, epochs, device, print_every=1)

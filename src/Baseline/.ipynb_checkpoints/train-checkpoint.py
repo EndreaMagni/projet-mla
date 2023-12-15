@@ -45,7 +45,9 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
             loss = criterion(output, output_batch_onehot)
             loss.backward()
             optimizer.step()
-            total_loss += loss.item()         
+            total_loss += loss.item()   
+             
+            
         avg_train_loss = total_loss / len(train_data_loader)
         train_losses.append(avg_train_loss)
         
@@ -62,6 +64,7 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
                 output_batch_onehot = output_batch_onehot.view(-1, vocab_size)
                 val_loss = criterion(output, output_batch_onehot)
                 total_val_loss += val_loss.item()
+                
 
         avg_val_loss = total_val_loss / len(val_data_loader)
         val_losses.append(avg_val_loss)
