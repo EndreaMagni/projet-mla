@@ -79,14 +79,15 @@ def train(model, train_data_loader, val_data_loader,  vocab_size, learning_rate,
             best_val_loss = avg_val_loss
             best_model = model.state_dict()
             best_attention_weights=attention_weights
-
+            # Inside the loop for validation, where the best validation loss is updated
+        
         
         print(f'Epoch: {epoch + 1}, Training Loss: {avg_train_loss:.6f}, Validation Loss: {avg_val_loss:.6f}')
 
     
-    np.save('train_losses.npy', np.array(train_losses))
-    np.save('val_losses.npy', np.array(val_losses))
-    torch.save(best_model, 'best_model.pth')
+    np.save('train_losses_RNNsearch50.npy', np.array(train_losses))
+    np.save('val_losses_RNNsearch50.npy', np.array(val_losses))
+    torch.save(best_model, 'best_RNNsearch50.pt')
     print('Training Finished')
     return best_attention_weights
 
