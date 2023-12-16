@@ -1,4 +1,3 @@
-
 import torch
 import torch.nn as nn
 from RNNencdec.encoder import Encoder
@@ -28,14 +27,14 @@ class Seq2Seq(nn.Module):
         
         hidden_state            = context_vector
         
-        input_target_token      = target_token_sequence[0,:] * 0
-
+        input_target_token      = target_token_sequence[0,:]
+        
         for t in range(1, target_size):
             
             output, hidden_state    = self.decoder(input_target_token, 
                                                    hidden_state, 
                                                    context_vector)
-            
+
             outputs[t]              = output
             
             input_target_token     = output.argmax(1) 

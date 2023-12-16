@@ -1,8 +1,9 @@
+
 import torch
 import torch.nn as nn
-from Baseline.RNNencdec.encoder import Encoder
-from Baseline.RNNencdec.decoder import Decoder
-from Baseline.configuration import config as cfg
+from RNNencdec.encoder import Encoder
+from RNNencdec.decoder import Decoder
+from configuration import config as cfg
 
 class Seq2Seq(nn.Module):
 
@@ -27,14 +28,14 @@ class Seq2Seq(nn.Module):
         
         hidden_state            = context_vector
         
-        input_target_token      = target_token_sequence[0,:]
-        
+        input_target_token      = target_token_sequence[0,:] * 0
+
         for t in range(1, target_size):
             
             output, hidden_state    = self.decoder(input_target_token, 
                                                    hidden_state, 
                                                    context_vector)
-
+            
             outputs[t]              = output
             
             input_target_token     = output.argmax(1) 

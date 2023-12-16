@@ -1,4 +1,3 @@
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -13,6 +12,7 @@ class MaxoutLayer(nn.Module):
         
         self.num_pieces     = num_pieces
 
+    
     def forward(self, input_tensor):
 
         output              = self.fc(input_tensor)
@@ -65,6 +65,8 @@ class Decoder(nn.Module):
         output              = self.fc1(output)
 
         prediction          = self.fc2(output)
+
+        prediction          = F.softmax(prediction, dim=-1)
 
     
         return prediction, hidden_state

@@ -1,7 +1,8 @@
 import torch
 import torch.nn.functional as F
 import torch.nn as nn
-from Allignement import Allignement
+try : from Allignement import Allignement
+except : from RNNsearch.Allignement import Allignement
 
 
 class Maxout(nn.Module):

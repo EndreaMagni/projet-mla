@@ -1,6 +1,6 @@
 import sys
 sys.path.append("RNNsearch")
-
+import os
 from train import *
 from RNNsearch.RNNsearch import *
 from RNNsearch.Encoder_search import *
@@ -9,9 +9,7 @@ from RNNsearch.Allignement import *
 from datasets import load_from_disk
 import torch
 import torch.nn as nn
-from train import *
 from dataloader import *
-
 
 fr_vocab_path = '../../new30k_fr.txt'  # Path to the French vocab file
 with open(fr_vocab_path, 'r') as file:
@@ -28,6 +26,13 @@ with open(eng_vocab_path, 'r') as file:
 word_to_id_eng = { word.strip() : i for i, word in enumerate(eng_words)}
 
 
+test_val_data = load_from_disk('/home/linda/dataset_50/test')
+test_data, val_data = test_val_data.train_test_split(test_size=0.5).values()
+val_dataset = Seq2seqData(val_data, word_to_id_eng, word_to_id_fr)
+train_data = load_from_disk('/home/linda/dataset_50/train')
+train_dataset = Seq2seqData(train_data, word_to_id_eng, word_to_id_fr)
+
+# Define your model
 #hyperparameters
 batch_size = 80       # Number of sequences in a mini-batch
 vocab_size = 30000     # Size of the input vocabulary
@@ -36,32 +41,39 @@ embedding_dim = 620   # Word embedding dimension
 maxout_units= 500     # Number of units in the maxout layer
 allign_dim=50        # Number of features in the allignment model Tx
 
-if torch.cuda.is_available():
-    device = "cuda"
-else:
-    device = "cpu"
+
+device = "cpu"
 
 encoder = Encoder(vocab_size, hidden_size, embedding_dim, device=device)
 decoder = Decoder(vocab_size, hidden_size, embedding_dim, maxout_units, device=device)
 model = RNNsearch(encoder, decoder, device=device).to(device)
+#file_path = '~/projet-mla/src/Baseline/saves/Search_50/best_model.pth'
+file_path='saves/Search_50_last_version/best_model.pth'
 
-train_data = load_from_disk('/home/linda/dataset_50/train')
-test_val_data = load_from_disk('/home/linda/dataset_50/test')
+file_path = os.path.expanduser(file_path)
 
-#test_val_data = load_from_disk('/home/linda/projet-mla/mini_dataset')
-#train_data = load_from_disk('/home/linda/projet-mla/mini_dataset')
+state_dict = torch.load(file_path, map_location=device)
 
-test_data, val_data = test_val_data.train_test_split(test_size=0.5).values()
+model.load_state_dict(state_dict["model_state_dict"])
 
-# Create a TranslationDataset instance for training and validation
-train_dataset = Seq2seqData(train_data, word_to_id_eng, word_to_id_fr)
-val_dataset = Seq2seqData(val_data, word_to_id_eng, word_to_id_fr)
+# Create reverse lookup dictionary for French vocabulary
+trg_vocab_reverse_fr = {i: word for word, i in word_to_id_fr.items()}
+trg_vocab_reverse_eng = {i: word for word, i in word_to_id_eng.items()}
 
-# Move the data loaders to the same device as the model
-train_data_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, pin_memory=device=="cuda")
-val_data_loader = DataLoader(val_dataset, batch_size=batch_size, pin_memory=device=="cuda")
+source=train_dataset[100][0][train_dataset[100][0] != 0]
+results,alignement=model(source.unsqueeze(0))
 
-learning_rate = 0.1
-epochs = 100
+pred_idx=[]
 
-train(model, train_data_loader, val_data_loader, vocab_size, learning_rate, epochs, device, print_every=1)
+for i in range (results.shape[1]) :
+    pred_idx.append(results[:, i, :].argmax().item())
+    
+output_sequence = [trg_vocab_reverse_fr.get(idx) for idx in pred_idx]
+input_sequence= [trg_vocab_reverse_eng.get(int(idx) )for idx in (source)]
+print("input_sequence :" , input_sequence)
+print( "output_sequence :" ,output_sequence)
+
+breakpoint()
+
+def beam_search():
+    pass

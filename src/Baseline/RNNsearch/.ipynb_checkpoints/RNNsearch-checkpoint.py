@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from Allignement import Allignement
+try : from Allignement import Allignement
+except : from RNNsearch.Allignement import Allignement
 import numpy as np
 
 

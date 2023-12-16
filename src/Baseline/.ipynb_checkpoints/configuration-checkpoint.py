@@ -7,11 +7,11 @@ config = {
     "maxout_size"           : 500,
 
     "sequence_length"       : 50,
-    "lr"                    : None,
+    "lr"                    : 0.5,
     "batch_size"            : 80,
     
-    "epochs"                : int(1e6),
+    "epochs"                : int(1000),
 
-    "save_loss_ite"         : 100,
-    "save_model_ite"        : 4,
+    "save_loss_ite"         : 1,
+    "save_model_ite"        : 1000,
 }

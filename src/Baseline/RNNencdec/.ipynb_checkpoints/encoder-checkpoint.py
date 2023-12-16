@@ -13,13 +13,6 @@ class Encoder(nn.Module):
         self.gru            = nn.GRU(embedding_size, 
                                      hidden_size)
 
-
-    #     self.init_weights(gaussian_sigma)
-    # def init_weights(self, sigma):
-    #     for name, param in self.gru.named_parameters():
-    #         if 'weight' in name:
-    #             init.normal_(param.data, mean=0.0, std=sigma)
-
     def forward(self, input_token_sequence):
         
         embedded            = self.embedding(input_token_sequence)
@@ -27,3 +20,4 @@ class Encoder(nn.Module):
         output,hidden_state = self.gru(embedded)
 
         return hidden_state
+

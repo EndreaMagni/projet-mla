@@ -65,4 +65,3 @@ learning_rate = 0.1
 epochs = 100
 
 train(model, train_data_loader, val_data_loader, vocab_size, learning_rate, epochs, device, print_every=1)
-
