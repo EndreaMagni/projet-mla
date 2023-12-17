@@ -62,6 +62,64 @@ def translate_sentence(sentence, src_vocab, trg_vocab, model, trg_vocab_reverse,
     print("Translation result:", trg_tokens)
 
     return trg_tokens[1:-1]
+def translate_sentence_with_beam_search(sentence, src_vocab, trg_vocab, model, trg_vocab_reverse, device, max_len=50, num_beams=5):
+    model.eval()
+
+    # Tokenization
+    tokens = sentence.split()
+
+    # Convert words to indices
+    src_indexes = [src_vocab.get(token, src_vocab['<unk>']) for token in tokens]
+    src_indexes = [min(index, 29999) for index in src_indexes]
+    src_indexes = [src_vocab["<sos>"]] + src_indexes + [src_vocab["<eos>"]]
+
+    # Convert to tensor and ensure it's the correct type (Long) for embedding layer
+    src_tensor = torch.LongTensor(src_indexes).unsqueeze(1).to(device)
+
+    # Process source sentence with the encoder
+    with torch.no_grad():
+        encoder_outputs, hidden = model.encoder(src_tensor)
+
+    # Modify the hidden state for bidirectional GRU
+    if hidden.shape[0] == 2:
+        hidden_for_decoder = hidden
+    # Initialize beams
+    beams = [[trg_vocab["<sos>"]] for _ in range(num_beams)]
+    beam_scores = torch.zeros(num_beams, device=device)
+
+    for _ in range(max_len):
+        all_candidates = []
+        for i, beam in enumerate(beams):
+            trg_tensor = torch.LongTensor(beam).unsqueeze(1).to(device)
+
+            with torch.no_grad():
+                output, _ = model.decoder(encoder_outputs, hidden_for_decoder)
+
+            probs = torch.softmax(output[-1], dim=-1)
+            top_probs, top_idx = probs.topk(num_beams)
+            for j in range(num_beams):
+                #print(f"top_idx.shape:{top_idx.shape}")
+                next_beam = beam + [top_idx[0, j].item()]
+
+                score = beam_scores[i] + torch.log(top_probs[0, j])
+
+                all_candidates.append((score, next_beam))
+
+        # Order all candidates by score
+        all_candidates.sort(reverse=True)
+        # Select the top num_beams candidates
+        beams = [candidate[1] for candidate in all_candidates[:num_beams]]
+        beam_scores = torch.tensor([candidate[0] for candidate in all_candidates[:num_beams]])
+
+        # Check if all beams ended with <eos>
+        if all(beam[-1] == trg_vocab["<eos>"] for beam in beams):
+            break
+    # Choose the best beam
+    best_beam = beams[beam_scores.argmax().item()]
+
+    # Convert indices back to words
+    trg_tokens = [trg_vocab_reverse[i] for i in best_beam if i not in [trg_vocab["<sos>"], trg_vocab["<eos>"]]]
+    return trg_tokens
 
 batch_size = 80   
 
