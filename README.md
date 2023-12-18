@@ -1,7 +1,14 @@
 PROJET MLA groupe 10 : <br>
 Implémentation de l'article NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE
 ===
-Autors : RAHAOUI Linda , BOUCHAKOUR Feriel, KHORASSANI Raphaël, JING Wang 
+# Description
+This project is an implementation of the paper "Neural Machine Translation by Jointly Learning to Align and Translate". 
+
+# Contributors
+Linda Rahoui
+Feriel Bouchakour
+Raphaël Khorassani
+Wang Jing
 
 ## Notebook pour lancer les commandes
 - [Analyse des données](src/Run.ipynb)
