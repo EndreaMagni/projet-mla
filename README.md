@@ -20,6 +20,8 @@ Run the provided notebook to execute the translation model. The notebook include
 # Dataset
 The dataset used in this project can be found [here][3] . It includes parallel corpora for the languages involved in the translation model.
 
+# Methodology
+Our approach uses a sequence-to-sequence model with attention mechanisms to effectively translate while maintaining context.
 
 
 
