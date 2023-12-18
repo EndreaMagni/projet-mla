@@ -18,7 +18,7 @@ Run the provided notebook to execute the translation model. The notebook include
 - [Analyse des données](src/Run.ipynb)
 
 # Dataset
-The dataset used in this project can be found here :[Lien vers le dataset.][3] . It includes parallel corpora for the languages involved in the translation model.
+The dataset used in this project can be found [here][3] . It includes parallel corpora for the languages involved in the translation model.
 
 
 
