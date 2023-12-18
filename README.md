@@ -13,7 +13,7 @@ Ce Notebook contient toutes les commandes nécessaire et suffisantes pour reprod
 
 
 # Contributors
-Linda Rahoui
+Linda Rahoui 
 Feriel Bouchakour
 Raphaël Khorassani
 Wang Jing
@@ -22,8 +22,8 @@ Wang Jing
 To use this project, clone the repository and install the required libraries listed in requirements.txt.
 
 # Usage
-Run the provided notebook to execute the translation model. The notebook includes detailed instructions and examples.
-- [Analyse des données](src/Run.ipynb)
+Run the provided [notebook](src/Run.ipynb) to execute the translation model. The notebook includes detailed instructions and examples.
+
 
 # Dataset
 The dataset used in this project can be found [here][3] . It includes parallel corpora for the languages involved in the translation model.
