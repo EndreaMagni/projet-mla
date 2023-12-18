@@ -40,7 +40,7 @@ Here is the distribution of the taks we made :
 | **RNNSearch Model Architecture :**                                                             |
 | - Encoder                                    | Feriel                                           |
 | - Decoder                                    | Linda                                            |
-| - Alignment model                            | Wang                                             |
+| - Alignment model                            | Wang, Linda                                      |
 | - Seq2Seq                                    | Feriel, Linda, Wang                              |
 | **Evaluation Folder :**                                                                        |
 | - Script to launch evaluation with BLEU score | Raphaël                                         |
