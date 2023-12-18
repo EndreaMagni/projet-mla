@@ -3,13 +3,10 @@ import torch.nn.functional as F
 import torch.nn as nn
 
 # Attempt to import the Alignment module from different possible locations
-try: 
-    from Alignment import Alignment
-except: 
-    try: 
-        from Baseline.RNNsearch.Alignment import Alignment
-    except: 
-        from RNNsearch.Alignment import Alignment
+try : from Allignement import Allignement
+except : 
+    try : from Baseline.RNNsearch.Allignement import Allignement
+    except : from RNNsearch.Allignement import Allignement
 
 # Define the Maxout layer used in the Decoder
 class Maxout(nn.Module):
@@ -42,7 +39,7 @@ class Decoder(nn.Module):
         self.vocab_size = vocab_size
 
         # Initialize the Alignment, embedding, GRU, and maxout layers, and the final fully connected layer
-        self.Alignment = Alignment(hidden_size, device)
+        self.Alignment = Allignement(hidden_size, device)
         self.embedding = nn.Linear(hidden_size, embedding_size)
         self.gru = nn.GRU(input_size_gru, hidden_size, batch_first=True)
         self.maxout = Maxout(input_size_maxout, maxout_unit, 2)  # Example: maxout_unit=500
