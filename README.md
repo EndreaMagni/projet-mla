@@ -39,7 +39,7 @@ Here is the distribution of the taks we made :
 | - RNNEncDec model architecture               | Raphaël                                          |
 | **RNNSearch Model Architecture :**                                                             |
 | - Encoder                                    | Feriel                                           |
-| - Decoder                                    | Linda                                            |
+| - Decoder (+ Maxout)                         | Linda                                            |
 | - Alignment model                            | Wang, Linda                                      |
 | - Seq2Seq                                    | Feriel, Linda, Wang                              |
 | **Evaluation Folder :**                                                                        |
