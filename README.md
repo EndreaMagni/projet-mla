@@ -5,7 +5,7 @@ Implémentation de l'article NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO A
 This project is an implementation of the paper "Neural Machine Translation by Jointly Learning to Align and Translate". 
 
 # Contributors
-Linda Rahoui
+Linda Rahoui 
 Feriel Bouchakour
 Raphaël Khorassani
 Wang Jing
