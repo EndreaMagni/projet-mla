@@ -15,18 +15,24 @@ from dataloader import *
 def translate_sentence_with_beam_search(sentence, src_vocab, trg_vocab, model, trg_vocab_reverse, device, max_len=50, num_beams=5):
     model.eval()
 
-    # Tokenization and conversion to indices
+    # Tokenization
     tokens = sentence.split()
+
+    # Convert words to indices
     src_indexes = [src_vocab.get(token, src_vocab['<unk>']) for token in tokens]
+    src_indexes = [min(index, 29999) for index in src_indexes]
     src_indexes = [src_vocab["<sos>"]] + src_indexes + [src_vocab["<eos>"]]
 
-    # Convert to tensor
-    src_tensor = torch.LongTensor(src_indexes).unsqueeze(0).to(device)
+    # Convert to tensor and ensure it's the correct type (Long) for embedding layer
+    src_tensor = torch.LongTensor(src_indexes).unsqueeze(1).to(device)
 
     # Process source sentence with the encoder
     with torch.no_grad():
         encoder_outputs, hidden = model.encoder(src_tensor)
 
+    # Modify the hidden state for bidirectional GRU
+    if hidden.shape[0] == 2:
+        hidden_for_decoder = hidden
     # Initialize beams
     beams = [[trg_vocab["<sos>"]] for _ in range(num_beams)]
     beam_scores = torch.zeros(num_beams, device=device)
@@ -37,28 +43,33 @@ def translate_sentence_with_beam_search(sentence, src_vocab, trg_vocab, model, t
             trg_tensor = torch.LongTensor(beam).unsqueeze(1).to(device)
 
             with torch.no_grad():
-                output, _ = model.decoder(encoder_outputs, hidden)
+                output, _ = model.decoder(encoder_outputs, hidden_for_decoder)
 
             probs = torch.softmax(output[-1], dim=-1)
             top_probs, top_idx = probs.topk(num_beams)
             for j in range(num_beams):
+                #print(f"top_idx.shape:{top_idx.shape}")
                 next_beam = beam + [top_idx[0, j].item()]
+
                 score = beam_scores[i] + torch.log(top_probs[0, j])
+
                 all_candidates.append((score, next_beam))
-        # Order and select top beams
+
+        # Order all candidates by score
         all_candidates.sort(reverse=True)
+        # Select the top num_beams candidates
         beams = [candidate[1] for candidate in all_candidates[:num_beams]]
         beam_scores = torch.tensor([candidate[0] for candidate in all_candidates[:num_beams]])
 
+        # Check if all beams ended with <eos>
         if all(beam[-1] == trg_vocab["<eos>"] for beam in beams):
             break
-
-    # Choose the best beam and convert indices to words
+    # Choose the best beam
     best_beam = beams[beam_scores.argmax().item()]
-    trg_tokens = [trg_vocab_reverse.get(idx, '<unk>') for idx in best_beam if idx not in [trg_vocab["<sos>"], trg_vocab["<eos>"]]]
 
+    # Convert indices back to words
+    trg_tokens = [trg_vocab_reverse[i] for i in best_beam if i not in [trg_vocab["<sos>"], trg_vocab["<eos>"]]]
     return trg_tokens
-
 
 batch_size = 80   
 
@@ -127,7 +138,7 @@ allign_dim=50        # Number of features in the allignment model Tx
 encoder = Encoder(vocab_size, hidden_size, embedding_dim, device=device)
 decoder = Decoder(vocab_size, hidden_size, embedding_dim, maxout_units, device=device)
 model = RNNsearch(encoder, decoder, device=device).to(device)
-file_path = '~/projet-mla/src/Baseline/saves/Search_50/best_model.pth'
+file_path='saves/Search_50_last_version/best_model.pth'
 
 file_path = os.path.expanduser(file_path)
 

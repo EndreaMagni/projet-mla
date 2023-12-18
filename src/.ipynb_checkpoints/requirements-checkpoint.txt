@@ -1,0 +1,10 @@
+nltk
+tqdm
+torch
+numpy
+matplotlib
+datasets
+torchtext
+easydict
+loadingpy
+gdown

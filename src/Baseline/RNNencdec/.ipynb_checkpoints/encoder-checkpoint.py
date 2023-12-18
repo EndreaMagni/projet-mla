@@ -1,5 +1,4 @@
 import torch.nn as nn
-# import torch.nn.init as init
 
 class Encoder(nn.Module):
     def __init__(self, input_size, embedding_size, hidden_size):
@@ -7,17 +6,19 @@ class Encoder(nn.Module):
 
         self.hidden_size    = hidden_size
 
+        # Couche d'embedding pour convertir les jetons d'entrée en vecteurs denses
         self.embedding      = nn.Embedding(input_size, 
                                            embedding_size)
 
+        # Couche GRU pour traiter la séquence d'entrée incorporée
         self.gru            = nn.GRU(embedding_size, 
                                      hidden_size)
 
     def forward(self, input_token_sequence):
-        
+        # Embedding de la séquence de jetons d'entrée
         embedded            = self.embedding(input_token_sequence)
 
-        output,hidden_state = self.gru(embedded)
+        # Traitement de la séquence incorporée à travers la couche GRU
+        output, hidden_state = self.gru(embedded)
 
-        return hidden_state
-
+        return output, hidden_state

@@ -2,7 +2,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 try : from Allignement import Allignement
-except : from RNNsearch.Allignement import Allignement
+except : 
+    try : from Baseline.RNNsearch.Allignement import Allignement
+    except : from RNNsearch.Allignement import Allignement
 import numpy as np
 
 

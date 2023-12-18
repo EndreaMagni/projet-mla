@@ -9,14 +9,11 @@ import torch.nn.functional as F
 
 from loadingpy import pybar
 
-from configuration import config
+from Baseline.configuration import config
 from easydict import EasyDict
 cfg = EasyDict(config)
 
-
-# from .dataloader import create_dataloader
-# from .loss import Loss
-import random
+# Les imports ci-dessus sont nécessaires pour utiliser les fonctionnalités du code
 
 class BlankStatement:
     def __init__(self):
@@ -32,28 +29,32 @@ class BaselineTrainer:
 
     def __init__(self, quiet_mode: bool, save_name: str = 'Nothing') -> None:
 
-        self.quiet_mode         = quiet_mode
-        self.create_dir(name = save_name)
+        self.quiet_mode = quiet_mode
+        self.create_dir(name=save_name)
 
-    def create_dir(self, name = 'Nothing') :
-        if name == 'Nothing' :
+    def create_dir(self, name='Nothing'):
+        # Fonction pour créer un répertoire avec un nom donné ou une horodatage s'il n'est pas fourni
+        if name == 'Nothing':
             import datetime
-            now         = datetime.datetime.now()
-            name        = now.strftime("%Y-%m-%d %H:%M:%S")
+            now = datetime.datetime.now()
+            name = now.strftime("%Y-%m-%d %H:%M:%S")
 
-        self.dir = f"saves/{name}"
+        self.dir = f"Models/{name}"
         os.makedirs(self.dir, exist_ok=True)
-        
-    def Init_weights(self, m):
-        for name, param in m.named_parameters():
-            if 'weight_hh' in name  : init.orthogonal_(param.data) 
-            elif 'weight' in name   : nn.init.normal_(param.data, mean=0, std=0.01)  
-            else                    : nn.init.constant_(param.data, 0)
 
+    def Init_weights(self, m):
+        # Initialiser les poids des modules du modèle
+        for name, param in m.named_parameters():
+            if 'weight_hh' in name:
+                init.orthogonal_(param.data)
+            elif 'weight' in name:
+                nn.init.normal_(param.data, mean=0, std=0.01)
+            else:
+                nn.init.constant_(param.data, 0)
 
     def train(self, model, train_data_loader,val_data_loader, device,
               nohup = False, mode = "RNNEncDec",seq_len = cfg.sequence_length, 
-              load_model = "Nothing", chosed_optimizer = "adadelta") :
+              load_model = "Nothing", chosed_optimizer = "adadelta", lr = 0) :
 
 
         name_code = "S" if mode == "RNNSearch" else "E"
@@ -73,8 +74,10 @@ class BaselineTrainer:
 
         len_batches = len(train_data_loader)
 
+        if lr == 0 : lr = cfg.lr
+        
         if chosed_optimizer == "adadelta": 
-            optimizer = torch.optim.Adadelta(model.parameters(), lr=cfg.lr, rho=0.95, eps=1e-06)
+            optimizer = torch.optim.Adadelta(model.parameters(), lr=lr, rho=0.95, eps=1e-06)
         elif chosed_optimizer == "adam":
             optimizer = torch.optim.Adam(model.parameters())
 
@@ -114,7 +117,7 @@ class BaselineTrainer:
 
                 optimizer.zero_grad()
 
-                if mode == "RNNEncDec" : output = model(input_batch, output_batch)                  
+                if mode == "RNNEncDec" : output = model(input_batch)                  
                 else : output, attention_weights = model(input_batch)
                     
                 output = output.reshape(-1, cfg.vocabulary_size)
@@ -133,6 +136,21 @@ class BaselineTrainer:
                 if not self.quiet_mode  and not nohup : 
                     pbar.set_description(description=f"{name_code} Epoch {epoch+1}, loss: {final_loss}, val: {val_loss}, Batch {n_batch+1}/{len_batches} loss : {round(loss.item(),4)}")
                     pbar.__next__()
+
+
+                if n_batch+10%(len_batches//3) == 0 :
+                    val_loss                    = self.evaluate(model, val_data_loader, criterion, mode = mode)
+    
+                    if val_loss < best_val_loss :
+                        best_val_loss = val_loss
+                        best_model = model.state_dict()
+                        if mode == "RNNSearch "    : best_attention_weights=attention_weights
+        
+                        torch.save({'model_state_dict': best_model,
+                                    'optimizer_state_dict': optimizer.state_dict()}, 
+                                    f"{self.dir}/best_model.pth")
+                    model.train()
+
 
 
                 
@@ -186,7 +204,7 @@ class BaselineTrainer:
                 
                 #output_batch_onehot= F.one_hot(torch.tensor(output_batch), num_classes=cfg.vocabulary_size).float().to(self.device)
 
-                if mode == "RNNEncDec" : output  = model(input_batch, output_batch)
+                if mode == "RNNEncDec" : output  = model(input_batch)
                 else : output, attention_weights = model(input_batch)
                     
                 output = output.reshape(-1, cfg.vocabulary_size)

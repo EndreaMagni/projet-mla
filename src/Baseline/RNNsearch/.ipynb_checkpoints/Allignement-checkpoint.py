@@ -21,7 +21,7 @@ class Allignement(nn.Module):
         # encoder ouput : enc_out 
         # Calcul du scores d'énergie
         e_ij = torch.tanh(self.Wa(si) + self.Ua(enc_out).transpose(0,1))
-        breakpoint()
+       
         e_ij = self.va(e_ij).squeeze(2).transpose(0,1)
         #Calcul du poids d'attenttion 
         alpha_ij = F.softmax(e_ij, dim=1)
