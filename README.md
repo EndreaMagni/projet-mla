@@ -1,16 +1,7 @@
-PROJET MLA groupe 10 : <br>
-Implémentation de l'article NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE
+PROJET MLA group 10 : <br>
 ===
-
-## Description
-
-Notre projet a consisté en la réimplémentation de l'article intitulé ["Neural machine translation by jointly learning to align and translate"][2] de Dzmitry Bahdanau, KyungHyun Cho, et Yoshua Bengio, publié sur arXiv (arXiv:1409.0473).
-
-## Reproduire nos expérimentations
-- [Lien pour ouvrir le notebook](src/Run.ipynb)
-
-Ce Notebook contient toutes les commandes nécessaire et suffisantes pour reproduire nos expérimentations.
-
+# Description
+This project is an implementation of the paper ["Neural machine translation by jointly learning to align and translate"][2] by Dzmitry Bahdanau, KyungHyun Cho, and Yoshua Bengio.
 
 # Contributors
 Linda Rahoui 
@@ -27,6 +18,34 @@ Run the provided [notebook](src/Run.ipynb) to execute the translation model. The
 
 # Dataset
 The dataset used in this project can be found [here][3] . It includes parallel corpora for the languages involved in the translation model.
+
+# Methodology
+Our approach uses a sequence-to-sequence model with attention mechanisms to effectively translate while maintaining context.
+
+# Task distribution
+Here is the distribution of the taks we made :
+
+| Tâches                                      | Responsables                                     |
+|---------------------------------------------|--------------------------------------------------|
+| **Dataset :**                               |                                                  |
+| Télécharger le dataset et tokeniser avec Moses tokenizer | Feriel                                        |
+| Récupérer les mots les plus fréquents et padder le dataset | Raphaël et Feriel                               |
+| **Dossier src :**                            |                                                  |
+| Fichier main.py                              | Tout le monde                                    |
+| Fichier Run.ipynb                            | Raphaël                                          |
+| **Dossier Baseline :**                       |                                                  |
+| Affichage des poids de l’alignement model    | Wang                                             |
+| Script pour l’entraînement translation.py   | Tout le monde                                    |
+| Architecture modèle RNNEncDec               | Raphaël                                          |
+| **Architecture modèle RNNSearch :**          |                                                  |
+| Encodeur                                     | Feriel                                           |
+| Décodeur                                     | Linda                                            |
+| Alignement model                             | Wang                                             |
+| Seq2Seq                                     | Feriel, Linda, Wang                              |
+| **Dossier Evaluation :**                     |                                                  |
+| Script pour lancer l’évaluation avec le BLEU score | Raphaël                                       |
+| **Dossier GenerateData :**                   |                                                  |
+| Script du dataloader                         | Feriel                                           |
 
 
 [2]: https://arxiv.org/abs/1409.0473 "lien article"
