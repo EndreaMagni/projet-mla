@@ -1,8 +1,16 @@
 PROJET MLA groupe 10 : <br>
 Implémentation de l'article NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE
 ===
-# Description
-This project is an implementation of the paper "Neural Machine Translation by Jointly Learning to Align and Translate". 
+
+## Description
+
+Notre projet a consisté en la réimplémentation de l'article intitulé ["Neural machine translation by jointly learning to align and translate"][2] de Dzmitry Bahdanau, KyungHyun Cho, et Yoshua Bengio, publié sur arXiv (arXiv:1409.0473).
+
+## Reproduire nos expérimentations
+- [Lien pour ouvrir le notebook](src/Run.ipynb)
+
+Ce Notebook contient toutes les commandes nécessaire et suffisantes pour reproduire nos expérimentations.
+
 
 # Contributors
 Linda Rahoui
@@ -20,7 +28,7 @@ Run the provided notebook to execute the translation model. The notebook include
 # Dataset
 The dataset used in this project can be found [here][3] . It includes parallel corpora for the languages involved in the translation model.
 
+https://arxiv.org/abs/1409.0473
 
-
-
+[2]: https://arxiv.org/abs/1409.0473 "lien article"
 [3]: https://www.statmt.org/wmt14/translation-task.html "lien dataset"
