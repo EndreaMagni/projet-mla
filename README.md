@@ -28,7 +28,6 @@ Run the provided notebook to execute the translation model. The notebook include
 # Dataset
 The dataset used in this project can be found [here][3] . It includes parallel corpora for the languages involved in the translation model.
 
-https://arxiv.org/abs/1409.0473
 
 [2]: https://arxiv.org/abs/1409.0473 "lien article"
 [3]: https://www.statmt.org/wmt14/translation-task.html "lien dataset"
