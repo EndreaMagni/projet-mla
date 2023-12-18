@@ -10,8 +10,8 @@ Voici le petit git sur lequel on va travailler, et ça c'est le readme qu'on pou
 - Trouver les datasets qui nous seront utiles
 - Remplir cette to do list mdrrr
 
-
-## Implémentation
+## Notebook pour lancer les commandes
+- [Analyse des données](src/Run.ipynb)
 
 ## Informations utiles
 
