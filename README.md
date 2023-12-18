@@ -10,8 +10,13 @@ Feriel Bouchakour
 Raphaël Khorassani
 Wang Jing
 
-## Notebook pour lancer les commandes
+# Installation and Setup
+To use this project, clone the repository and install the required libraries listed in requirements.txt.
+
+Usage
+Run the provided notebook to execute the translation model. The notebook includes detailed instructions and examples.
 - [Analyse des données](src/Run.ipynb)
+
 
 ## Informations utiles
 
