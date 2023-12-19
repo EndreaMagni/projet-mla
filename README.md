@@ -4,7 +4,7 @@ PROJET MLA group 10 : <br>
 This project is an implementation of the paper ["Neural machine translation by jointly learning to align and translate"][2] by Dzmitry Bahdanau, KyungHyun Cho, and Yoshua Bengio.
 
 # Contributors
-- Linda Rahoui 
+- Linda Rahaoui 
 - Feriel Bouchakour
 - Raphaël Khorassani
 - Wang Jing
